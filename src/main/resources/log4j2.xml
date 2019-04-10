@@ -70,7 +70,7 @@
   </appenders>
  
   <loggers>
-    <logger name="HWJVI_Client" level="Trace" additivity="false">
+    <logger name="jvulkan-example" level="Trace" additivity="false">
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="File"/>
     </logger>

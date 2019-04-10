@@ -409,7 +409,7 @@ public class Test10
 
     public Test10()
     {
-        log = LoggerFactory.getLogger("HWJVI_Client");
+        log = LoggerFactory.getLogger("jvulkan-example");
         
         String architectureDataModel = System.getProperty("sun.arch.data.model");
         String operatingSystem = System.getProperty("os.name").toLowerCase();
@@ -1312,11 +1312,9 @@ public class Test10
         {
             vertexShaderModuleReferenceHandle =
                     loadShader(shaderPath + "VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
-//                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
                     loadShader(shaderPath + "VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
-//                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");

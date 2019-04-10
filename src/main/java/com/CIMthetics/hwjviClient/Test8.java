@@ -123,6 +123,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAccessFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAttachmentLoadOp;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAttachmentStoreOp;
@@ -304,9 +305,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     
     private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
-//    // GLFW items
-//    private long windowHandle;
-//    private long windowSurfaceHandle;
     private int     windowWidth     = 1024;
     private int     windowHeight    = 768;
     
@@ -345,7 +343,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     private VkCommandPool           vulkanGraphicsCommandPoolHandle;
 
 
-
     private SwapchainSupportDetails     swapchainSupportDetails;
     private VkExtent2D                  swapchainExtentUsed;
     private VkFormat                    swapchainImageFormatUsed;
@@ -378,6 +375,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     private ImageBufferInformation      depthImageInformation = null;
     private VkImageView                 depthImageViewHandle = null;
     
+    private String shaderPath = null;
     
     private Instant                 startTime = Instant.now();
 
@@ -412,108 +410,49 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     private ArrayList<Integer> indices = new ArrayList<Integer>();
 
-//    private class Vertex
-//    {
-//        Vector3f position;
-//        Vector3f color;
-//        Vector2f textureCoordinate;
-//        
-//        /**
-//         * 
-//         * @param position
-//         * @param color
-//         * @param textureCoordinate
-//         */
-//        Vertex(Vector3f position, Vector3f color, Vector2f textureCoordinate)
-//        {
-//            this.position = position;
-//            this.color = color;
-//            this.textureCoordinate = textureCoordinate;
-//        }
-//    }
-//    
-//    private int getPositionOffset()
-//    {
-//        return 0;
-//    }
-//    
-//    private int getColorOffset()
-//    {
-//        return (3 * 4);
-//    }
-//    
-//    private int getTextureCoordinateOffset()
-//    {
-//        return (3 * 4) + (3 * 4);
-//    }
-//    
-//    private int getSizeOfVertexInBytes()
-//    {
-//        return (3 * 4) + (3 * 4) + (2 * 4);
-//    }
-//
-//    private Vertex[] vertices;
-//    
-//    private int[] indices = new int[] {0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7};
-//
     public Test8()
     {
-        log = LoggerFactory.getLogger("HWJVI_Client");
+        log = LoggerFactory.getLogger("jvulkan-example");
         
-//        vertices = new Vertex[8];
-//        
-//        Vector3f    color;
-//        Vector3f    position;
-//        Vertex      vertex;
-//        Vector2f    textureCoordinate;
-//        
-//        color = new Vector3f(1.0f, 0.0f, 0.0f);
-//        position = new Vector3f(-0.5f, -0.5f, 0.0f);
-//        textureCoordinate = new Vector2f(1.0f, 0.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[0] = vertex;
-//
-//        color = new Vector3f(0.0f, 1.0f, 0.0f);
-//        position = new Vector3f(0.5f, -0.5f, 0.0f);
-//        textureCoordinate = new Vector2f(0.0f, 0.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[1] = vertex;
-//
-//        color = new Vector3f(0.0f, 0.0f, 1.0f);
-//        position = new Vector3f(0.5f, 0.5f, 0.0f);
-//        textureCoordinate = new Vector2f(0.0f, 1.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[2] = vertex;
-//
-//        color = new Vector3f(1.0f, 1.0f, 1.0f);
-//        position = new Vector3f(-0.5f, 0.5f, 0.0f);
-//        textureCoordinate = new Vector2f(1.0f, 1.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[3] = vertex;
-//
-//        color = new Vector3f(1.0f, 0.0f, 0.0f);
-//        position = new Vector3f(-0.5f, -0.5f, -0.5f);
-//        textureCoordinate = new Vector2f(1.0f, 0.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[4] = vertex;
-//
-//        color = new Vector3f(0.0f, 1.0f, 0.0f);
-//        position = new Vector3f(0.5f, -0.5f, -0.5f);
-//        textureCoordinate = new Vector2f(0.0f, 0.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[5] = vertex;
-//
-//        color = new Vector3f(0.0f, 0.0f, 1.0f);
-//        position = new Vector3f(0.5f, 0.5f, -0.5f);
-//        textureCoordinate = new Vector2f(0.0f, 1.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[6] = vertex;
-//
-//        color = new Vector3f(1.0f, 1.0f, 1.0f);
-//        position = new Vector3f(-0.5f, 0.5f, -0.5f);
-//        textureCoordinate = new Vector2f(1.0f, 1.0f);
-//        vertex = new Vertex(position, color, textureCoordinate);
-//        vertices[7] = vertex;
+        String architectureDataModel = System.getProperty("sun.arch.data.model");
+        String operatingSystem = System.getProperty("os.name").toLowerCase();
+        
+        // See what OS we are running under
+        if (operatingSystem.equals("linux") == false)
+        {
+            log.error("At this point there is only a native image for Linux x86_64.");
+            System.exit(-1);
+        }
+        
+        // See if we are running 64 bit Java
+        if (architectureDataModel.equals("64") == false)
+        {
+            log.error("At this point there is only a 64 bit native image Linux.");
+            System.exit(-1);
+        }
+        
+        String nativeLibraryPath = System.getProperty("jvulkan.native.library.path", "NotFound");
+        if (nativeLibraryPath.equals("NotFound") == true)
+        {
+            log.error("A valid path to the native library must be specified with the jvulkan.native.library.path command line argument.");
+            log.error("i.e. java -Djvulkan.native.library.path=\"/myprojects/mylibpath/\".");
+            System.exit(-1);
+        }
+        
+        shaderPath = System.getProperty("jvulkan-examples.shader.path", "NotFound");
+        if (shaderPath.equals("NotFound") == true)
+        {
+            log.error("A valid path to the location of the shaders (.spv files) must be specified with the jvulkan-examples.shader.path command line argument.");
+            log.error("i.e. java -Djvulkan.native.library.path=\"/myprojects/myshaders/\".");
+            System.exit(-1);
+        }
+
+        if (shaderPath.endsWith("/") == false)
+            shaderPath = shaderPath + "/";
+
+        @SuppressWarnings("unused")
+        VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
+        
     }
     
 
@@ -530,8 +469,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
     private void init()
     {
-//        initGLFWWindow();
-        
         initWaylandWindow();
         initVulkan();
     }
@@ -610,11 +547,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         log.debug("Shell surface created {}", waylandShellSurface.toString());
         
         wlShellSetTopLevel(waylandShellSurface);
-        
-//        log.trace("Dispatching");
-//        wlDisplayDispatch(waylandDisplay);
-//        log.trace("Waiting for round trip");
-//        wlRoundTrip(waylandDisplay);
     }
     
     private void cleanupWaylandWindow()
@@ -2059,10 +1991,10 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial8Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial8Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");

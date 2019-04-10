@@ -102,6 +102,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAccessFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAttachmentLoadOp;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkAttachmentStoreOp;
@@ -312,6 +313,8 @@ public class Test4
     private static final long       UINT64_MAX         = 0xFFFFFFFFFFFFFFFFL;
     private static final int        MAX_FRAMES_IN_FLIGHT = 3;
 
+    private String shaderPath = null;
+    
     private BufferInformation       vertexBufferInformation = null;
     private BufferInformation       indexBufferInformation = null;
 
@@ -365,7 +368,46 @@ public class Test4
 
     public Test4()
     {
-        log = LoggerFactory.getLogger("HWJVI_Client");
+        log = LoggerFactory.getLogger("jvulkan-example");
+        
+        String architectureDataModel = System.getProperty("sun.arch.data.model");
+        String operatingSystem = System.getProperty("os.name").toLowerCase();
+        
+        // See what OS we are running under
+        if (operatingSystem.equals("linux") == false)
+        {
+            log.error("At this point there is only a native image for Linux x86_64.");
+            System.exit(-1);
+        }
+        
+        // See if we are running 64 bit Java
+        if (architectureDataModel.equals("64") == false)
+        {
+            log.error("At this point there is only a 64 bit native image Linux.");
+            System.exit(-1);
+        }
+        
+        String nativeLibraryPath = System.getProperty("jvulkan.native.library.path", "NotFound");
+        if (nativeLibraryPath.equals("NotFound") == true)
+        {
+            log.error("A valid path to the native library must be specified with the jvulkan.native.library.path command line argument.");
+            log.error("i.e. java -Djvulkan.native.library.path=\"/myprojects/mylibpath/\".");
+            System.exit(-1);
+        }
+        
+        shaderPath = System.getProperty("jvulkan-examples.shader.path", "NotFound");
+        if (shaderPath.equals("NotFound") == true)
+        {
+            log.error("A valid path to the location of the shaders (.spv files) must be specified with the jvulkan-examples.shader.path command line argument.");
+            log.error("i.e. java -Djvulkan.native.library.path=\"/myprojects/myshaders/\".");
+            System.exit(-1);
+        }
+
+        if (shaderPath.endsWith("/") == false)
+            shaderPath = shaderPath + "/";
+
+        @SuppressWarnings("unused")
+        VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
         
         vertices = new Vertex[4];
         
@@ -1067,10 +1109,10 @@ public class Test4
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial4Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial4Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial4Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial4Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");

@@ -14,7 +14,11 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 pip install foobar
 ```
 
-## Usage
+## Running the examples
+
+<code>java -Dvulkan.validation=true -Djava.library.path="$LD_LIBRARY_PATH" -Djvulkan.native.library.path="/home/dkaip/git/jvulkan-natives-Linux-x86_64/Release" -Djvulkan-examples.shader.path="/home/dkaip/JavaWorkspaces/CIMthetics/hwjviClient/src/main/resources/" myprog</code>
+
+If you would like to see debug information for Wayland set the <code>WAYLAND_DEBUG</code> environment variable to the value of <code>1</code>.
 
 ```python
 import foobar
