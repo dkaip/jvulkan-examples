@@ -8,6 +8,9 @@
 In addition to this library you will need to retrieve and build the 
 jvulkan-natives-Linux-x86_64 project and the jvulkan project.
 
+Hopefully before too long jvulkan and the natives will be available in
+jcenter and / or maven central.
+
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
