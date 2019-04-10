@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SURFACE_EXTENSION_NAME;
@@ -8,23 +8,17 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.VK_MAKE_VER
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.pushDataToVirtualMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAcquireNextImageKHR;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAllocateCommandBuffers;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAllocateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAllocateMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkBeginCommandBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkBindBufferMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBeginRenderPass;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindDescriptorSets;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindIndexBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindPipeline;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindVertexBuffers;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdCopyBuffer;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdDrawIndexed;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdDraw;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdEndRenderPass;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateCommandPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDebugReportCallbackEXT;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDescriptorPool;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDescriptorSetLayout;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDevice;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateFence;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateFramebuffer;
@@ -40,8 +34,6 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateWay
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyCommandPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDebugReportCallbackEXT;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDescriptorPool;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDescriptorSetLayout;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDevice;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyFence;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyFramebuffer;
@@ -59,7 +51,6 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkEndComman
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkEnumerateDeviceExtensionProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkEnumeratePhysicalDevices;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkFreeCommandBuffers;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkFreeMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetBufferMemoryRequirements;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetDeviceQueue;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceFeatures;
@@ -75,10 +66,8 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetSwapch
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkMapMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueuePresentKHR;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueSubmit;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueWaitIdle;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkResetFences;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUnmapMemory;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlCompositorCreateSurface;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlConnectDisplay;
@@ -91,15 +80,26 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRoundTrip
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellGetShellSurface;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellSetTopLevel;
 import static com.CIMthetics.jvulkan.VulkanCore.VKUtil.vkResultToString;
+//import static org.lwjgl.glfw.GLFW.GLFW_CLIENT_API;
+//import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+//import static org.lwjgl.glfw.GLFW.GLFW_NO_API;
+//import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+//import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+//import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+//import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+//import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+//import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+//import static org.lwjgl.glfw.GLFW.glfwInit;
+//import static org.lwjgl.glfw.GLFW.glfwTerminate;
+//import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+//import static org.lwjgl.glfw.GLFWVulkan.glfwVulkanSupported;
+//import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -107,8 +107,6 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +124,6 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkCommandBufferUsageFlagBits
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkComponentSwizzle;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkCompositeAlphaFlagBitsKHR;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkCullModeFlagBits;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkDescriptorType;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkDynamicState;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFenceCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFormat;
@@ -135,7 +132,6 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageAspectFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageLayout;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageUsageFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageViewType;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkIndexType;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkInstanceCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkLogicOp;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkMemoryMapFlagBits;
@@ -156,9 +152,6 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.MappedMemoryPointer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkBuffer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkCommandBuffer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkCommandPool;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorPool;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorSet;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorSetLayout;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDevice;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDeviceMemory;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkFence;
@@ -180,13 +173,9 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.IntReturnValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAllocationCallbacks;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAttachmentDescription;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAttachmentReference;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkBufferCopy;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkClearColorValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkClearValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkComponentMapping;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkDescriptorBufferInfo;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkDescriptorPoolSize;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkDescriptorSetLayoutBinding;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkExtensionProperties;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkExtent2D;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageSubresourceRange;
@@ -206,15 +195,11 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkSurfaceFormatKHR;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkVertexInputAttributeDescription;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkVertexInputBindingDescription;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkViewport;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkWriteDescriptorSet;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkApplicationInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkBufferCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkCommandBufferAllocateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkCommandBufferBeginInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkCommandPoolCreateInfo;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescriptorPoolCreateInfo;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescriptorSetAllocateInfo;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescriptorSetLayoutCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDeviceCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDeviceQueueCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkFenceCreateInfo;
@@ -253,13 +238,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlShell;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurface;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
-/**
- * This is the vulkan tutorial on Uniform Buffers.
- * 
- * @author Douglas Kaip
- *
- */
-public class Test5
+public class Test2
 {
     private Logger log;
 
@@ -326,31 +305,17 @@ public class Test5
     private ArrayList<VkCommandBuffer>  swapchainRenderCommandBuffers = new ArrayList<VkCommandBuffer>();
     
     private ArrayList<VkSemaphore>      imageAvailableSemaphoreHandles = new ArrayList<VkSemaphore>();
-    private ArrayList<VkSemaphore>      renderFinishedSemaphoreHandles = new ArrayList<VkSemaphore>();
+    private ArrayList<VkSemaphore>             renderFinishedSemaphoreHandles = new ArrayList<VkSemaphore>();
     private ArrayList<VkFence>          inFlightFenceHandles = new ArrayList<VkFence>();
     
     private int currentFrame = 0;
     
     private static final long       UINT64_MAX         = 0xFFFFFFFFFFFFFFFFL;
-    private static final int        MAX_FRAMES_IN_FLIGHT = 3;
+    private static final int        MAX_FRAMES_IN_FLIGHT = 2;
 
-    private BufferInformation       vertexBufferInformation = null;
-    private BufferInformation       indexBufferInformation = null;
-    
-    private ArrayList<BufferInformation> uniformBufferInformationCollection = new ArrayList<BufferInformation>();
-    private VkDescriptorSetLayout       descriptorSetLayoutHandle;
-    private VkDescriptorPool            descriptorPoolHandle;
-    private ArrayList<VkDescriptorSet>  descriptorSetHandles = new ArrayList<VkDescriptorSet>();
-    
+    private VkBuffer                    vertexBufferHandle;
+
     private String shaderPath = null;
-    
-    private Instant                 startTime = Instant.now();
-
-    private class BufferInformation
-    {
-        VkBuffer        bufferHandle;
-        VkDeviceMemory  bufferMemoryHandle;
-    }
     
     private class Position
     {
@@ -378,22 +343,6 @@ public class Test5
         }
     }
     
-    private class UniformBufferObject
-    {
-        Matrix4f model;
-        
-        Matrix4f view;
-        
-        Matrix4f projection;
-        
-        public int sizeInBytes()
-        {
-            return ((4 * 4) * 4) * 3;
-        }
-    }
-    
-    private UniformBufferObject uniformBufferObject = new UniformBufferObject();
-    
     private class Vertex
     {
         Position position;
@@ -408,9 +357,7 @@ public class Test5
     
     private Vertex[] vertices;
     
-    private int[] indices = new int[] {0, 1, 2, 0, 2, 3};
-
-    public Test5()
+    public Test2()
     {
         log = LoggerFactory.getLogger("jvulkan-example");
         
@@ -453,38 +400,33 @@ public class Test5
         @SuppressWarnings("unused")
         VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
         
-        vertices = new Vertex[4];
+        vertices = new Vertex[3];
         
         Color color;
         Position position;
         Vertex vertex;
         
-        color = new Color(1.0f, 0.0f, 0.0f);
-        position = new Position(-0.5f, -0.5f);
+        color = new Color(1.0f, 1.0f, 1.0f);
+        position = new Position(0.0f, -0.5f);
         vertex = new Vertex(position, color);
         vertices[0] = vertex;
 
         color = new Color(0.0f, 1.0f, 0.0f);
-        position = new Position(0.5f, -0.5f);
+        position = new Position(0.5f, 0.5f);
         vertex = new Vertex(position, color);
         vertices[1] = vertex;
 
         color = new Color(0.0f, 0.0f, 1.0f);
-        position = new Position(0.5f, 0.5f);
-        vertex = new Vertex(position, color);
-        vertices[2] = vertex;
-
-        color = new Color(1.0f, 1.0f, 1.0f);
         position = new Position(-0.5f, 0.5f);
         vertex = new Vertex(position, color);
-        vertices[3] = vertex;
+        vertices[2] = vertex;
 
     }
     
 
     public static void main(String[] args)
     {
-        Test5 test = new Test5();
+        Test2 test = new Test2();
         
         test.init();
         
@@ -632,8 +574,6 @@ public class Test5
         
         createRenderPass();
         
-        createDescriptorSetLayout();
-        
         createGraphicsPipeline();
         
         createFrameBuffers();
@@ -642,214 +582,28 @@ public class Test5
         
         createVertexBuffer();
         
-        createIndexBuffer();
-        
-        createUniformBuffers();
-        
-        createDescriptorPool();
-        
-        createDescriptorSets();
-
         createCommandBuffers();
         
         createSyncObjects();
     }
     
-    private void createDescriptorSets()
+    private void createVertexBuffer()
     {
-        /*
-         * We are creating one descriptor set for each
-         * swapchain image.  All of the sets have the 
-         * same layout.
-         */
-        int setsNeeded = uniformBufferInformationCollection.size();
+        int positionSize = 2 /* for x and y */ * 4 /* for size of float */;
+        int colorSize = 3 /* for r, g, b, */ * 4 /* for size of float */;
+        int totalSizeInBytes = (positionSize + colorSize) * 3 /* for 3 vertices */;
         
-        log.trace("Creating {} descriptor sets.", setsNeeded);
-        
-        Collection<VkDescriptorSetLayout> descriptorSets = new LinkedList<VkDescriptorSetLayout>();
-        for (int i = 0; i < setsNeeded; i++)
-        {
-            descriptorSets.add(descriptorSetLayoutHandle);
-        }
-        
-        VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = new VkDescriptorSetAllocateInfo();
-        descriptorSetAllocateInfo.setDescriptorPool(descriptorPoolHandle);
-        descriptorSetAllocateInfo.setSetLayouts(descriptorSets);
-        
-        /*
-         *FIXME
-         * Modify vkAllocateDescriptorSets so that it creates the descriptor set
-         * handles as needed and adds them to the collection.  In this case
-         * having to add empty handles to the collection first is icky.
-         */
-        for (int i = 0; i < setsNeeded; i++)
-        {
-            descriptorSetHandles.add(new VkDescriptorSet());
-        }
-        VkResult result = vkAllocateDescriptorSets(vulkanLogicalDevice, descriptorSetAllocateInfo, descriptorSetHandles);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("failed to allocate descriptor sets!: " + vkResultToString(result));
-        }
-
-        for (int i = 0; i < descriptorSetHandles.size(); i++)
-        {
-            VkDescriptorBufferInfo descriptorBufferInfo =
-                    new VkDescriptorBufferInfo(
-                            uniformBufferInformationCollection.get(i).bufferHandle,
-                            0L,
-                            192L); // FIXME magic number...sizeof UniformBufferObject
-            
-            Collection<VkDescriptorBufferInfo> descriptorBufferInfoCollection = new LinkedList<VkDescriptorBufferInfo>();
-            descriptorBufferInfoCollection.add(descriptorBufferInfo);
-            
-            VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet();
-            writeDescriptorSet.setDstSet(descriptorSetHandles.get(i));
-            writeDescriptorSet.setDstBinding(0);
-            writeDescriptorSet.setDstArrayElement(0);
-            writeDescriptorSet.setDescriptorType(VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            writeDescriptorSet.setBufferInfo(descriptorBufferInfoCollection);
-            
-            Collection<VkWriteDescriptorSet> writeDescriptorSetCollection = new LinkedList<VkWriteDescriptorSet>();
-            writeDescriptorSetCollection.add(writeDescriptorSet);
-            
-            vkUpdateDescriptorSets(vulkanLogicalDevice, writeDescriptorSetCollection, null);
-        }
-    }
-    
-    private void createDescriptorPool()
-    {
-        VkDescriptorPoolSize descriptorPoolSize =
-                new VkDescriptorPoolSize(VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, swapchainImageReferences.size());
-        
-        Collection<VkDescriptorPoolSize> descriptorPoolSizeCollection = new LinkedList<VkDescriptorPoolSize>();
-        descriptorPoolSizeCollection.add(descriptorPoolSize);
-        
-        VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = new VkDescriptorPoolCreateInfo();
-        descriptorPoolCreateInfo.setPoolSizes(descriptorPoolSizeCollection);
-        descriptorPoolCreateInfo.setMaxSets(swapchainImageReferences.size());
-        
-        descriptorPoolHandle = new VkDescriptorPool();
-        VkResult result = vkCreateDescriptorPool(vulkanLogicalDevice, descriptorPoolCreateInfo, null, descriptorPoolHandle);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("failed to create descriptor pool!: " + vkResultToString(result));
-        }
-    }
-    
-    private void createUniformBuffers()
-    {
-        int bufferSizeInBytes = uniformBufferObject.sizeInBytes();
-        
-        log.trace("Creating uniform buffer object buffers");
-        
-        for (int i = 0; i < swapchainImageReferences.size(); i++)
-        {
-            BufferInformation uniformBufferInfo = createBuffer(
-                    bufferSizeInBytes,
-                    EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT),
-                    EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
-            
-            uniformBufferInformationCollection.add(uniformBufferInfo);
-        }
-    }
-    
-    private void createDescriptorSetLayout()
-    {
-        VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = new VkDescriptorSetLayoutBinding();
-        descriptorSetLayoutBinding.setBinding(0);
-        descriptorSetLayoutBinding.setDescriptorType(VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-        descriptorSetLayoutBinding.setDescriptorCount(1);
-        descriptorSetLayoutBinding.setStageFlags(EnumSet.of(VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT));
-        
-        VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = new VkDescriptorSetLayoutCreateInfo();
-        descriptorSetLayoutCreateInfo.setBindings(descriptorSetLayoutBinding);
-        
-        descriptorSetLayoutHandle = new VkDescriptorSetLayout();
-        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandle());
-        
-        VkResult result = vkCreateDescriptorSetLayout(
-                vulkanLogicalDevice,
-                descriptorSetLayoutCreateInfo,
-                null,
-                descriptorSetLayoutHandle);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("failed to create descriptor set layout!: " + vkResultToString(result));
-        }
-        
-        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandle());
-    }
-    
-    private void createIndexBuffer()
-    {
-        int indexBufferSizeInBytes = indices.length * 4 /* sizeof int in bytes */;
-
-        BufferInformation stagingBufferInfo = createBuffer(
-                (long)indexBufferSizeInBytes,
-                EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
-                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
-        
-        MappedMemoryPointer pointerToMappedMemory = new MappedMemoryPointer();
-        VkResult result = vkMapMemory(
-                vulkanLogicalDevice,
-                stagingBufferInfo.bufferMemoryHandle,
-                0,
-                indexBufferSizeInBytes,
-                EnumSet.noneOf(VkMemoryMapFlagBits.class),
-                pointerToMappedMemory);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to map memory: " + vkResultToString(result));
-        }
-
-        IntBuffer intBuffer = IntBuffer.allocate(indices.length);
-        for (int i = 0; i < indices.length; i++)
-        {
-            intBuffer.put(indices[i]);
-        }
-
-        /*
-         * Now we need to copy our vertex data into the virtual memory that the
-         * graphics card will use to access the data.
-         * 
-         * Since this memory is in virtual address space i.e. outside the, for
-         * lack of a better word, Java object reference space we need to use
-         * a native method that can access both memory spaces.
-         */
-        pushDataToVirtualMemory(intBuffer, pointerToMappedMemory);
-        
-        vkUnmapMemory(vulkanLogicalDevice, stagingBufferInfo.bufferMemoryHandle);
-        
-        indexBufferInformation = createBuffer(
-                indexBufferSizeInBytes,
-                EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
-                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
-
-        log.debug("Copying index buffer into device local storage");
-        copyBuffer(stagingBufferInfo.bufferHandle, indexBufferInformation.bufferHandle, indexBufferSizeInBytes);
-        log.debug("Copied index buffer into device local storage");
-
-        vkDestroyBuffer(vulkanLogicalDevice, stagingBufferInfo.bufferHandle, null);
-        vkFreeMemory(vulkanLogicalDevice, stagingBufferInfo.bufferMemoryHandle, null);
-}
-    
-    private BufferInformation createBuffer(
-            long bufferSizeInBytes,
-            EnumSet<VkBufferUsageFlagBits> bufferUsageFlags,
-            EnumSet<VkMemoryPropertyFlagBits> memoryPropertyFlags)
-    {
-        VkBufferCreateInfo bufferCreateInfo = new VkBufferCreateInfo();
-        bufferCreateInfo.setSize(bufferSizeInBytes);
-        bufferCreateInfo.setUsage(bufferUsageFlags);
-        bufferCreateInfo.setSharingMode(VkSharingMode.VK_SHARING_MODE_EXCLUSIVE);
+        VkBufferCreateInfo vertexBufferCreateInfo = new VkBufferCreateInfo();
+        vertexBufferCreateInfo.setSize((long)totalSizeInBytes);
+        vertexBufferCreateInfo.setUsage(EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
+        vertexBufferCreateInfo.setSharingMode(VkSharingMode.VK_SHARING_MODE_EXCLUSIVE);
 
         /*
          * Get a handle to a Buffer (VkBuffer) that has the qualities defined
          * above.
          */
-        VkBuffer bufferHandle = new VkBuffer();
-        VkResult result = vkCreateBuffer(vulkanLogicalDevice, bufferCreateInfo, null, bufferHandle);
+        vertexBufferHandle = new VkBuffer();
+        VkResult result = vkCreateBuffer(vulkanLogicalDevice, vertexBufferCreateInfo, null, vertexBufferHandle);
         if (result != VkResult.VK_SUCCESS)
         {
             throw new AssertionError("Failed to create vertex buffer: " + vkResultToString(result));
@@ -863,7 +617,7 @@ public class Test5
          */
         VkMemoryRequirements memoryRequirements = new VkMemoryRequirements();
         
-        vkGetBufferMemoryRequirements(vulkanLogicalDevice, bufferHandle, memoryRequirements);
+        vkGetBufferMemoryRequirements(vulkanLogicalDevice, vertexBufferHandle, memoryRequirements);
         
         log.debug("VkMemoryRequirements size={}, alignment={}, memoryTypeBits={}",
                 memoryRequirements.getSize(),
@@ -883,8 +637,8 @@ public class Test5
          * a pointer in the address space on the graphics card itself.
          * 
          */
-        VkDeviceMemory deviceMemoryHandle = new VkDeviceMemory();
-        result = vkAllocateMemory(vulkanLogicalDevice, memoryAllocateInfo, null, deviceMemoryHandle);
+        VkDeviceMemory vertexBufferDeviceMemoryHandle = new VkDeviceMemory();
+        result = vkAllocateMemory(vulkanLogicalDevice, memoryAllocateInfo, null, vertexBufferDeviceMemoryHandle);
         if (result != VkResult.VK_SUCCESS)
         {
             throw new AssertionError("Failed to allocate vertex memory: " + vkResultToString(result));
@@ -893,47 +647,30 @@ public class Test5
         
         /*
          * Now, associate (bind) the memory just allocated on the graphics card with
-         * the buffer handle(VkBuffer).
+         * the buffer handle(VkBuffer)... in this case the vertex buffer handle 
+         * (vertexBufferHandle) previously created.
          */
-        result = vkBindBufferMemory(vulkanLogicalDevice, bufferHandle, deviceMemoryHandle, 0);
+        result = vkBindBufferMemory(vulkanLogicalDevice, vertexBufferHandle, vertexBufferDeviceMemoryHandle, 0);
         if (result != VkResult.VK_SUCCESS) {
             throw new AssertionError("Failed to bind buffer memory: " + vkResultToString(result));
         }
 
-        BufferInformation temp = new BufferInformation();
-        temp.bufferHandle       = bufferHandle;
-        temp.bufferMemoryHandle = deviceMemoryHandle;
-        
-        return temp;
-    }
-    
-    private void createVertexBuffer()
-    {
-        int positionSize = 2 /* for x and y */ * 4 /* for size of float */;
-        int colorSize = 3 /* for r, g, b, */ * 4 /* for size of float */;
-        int totalSizeInBytes = (positionSize + colorSize) * 4 /* for 4 vertices */;
-        
-        BufferInformation vertexStagingBufferInfo = createBuffer(
-                (long)totalSizeInBytes,
-                EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
-                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
-        
         /*
          * Now we are getting a handle(MappedMemoryPointer) that corresponds to
          * the virtual memory address of the host accessible memory that
          * is also accessible to the graphics card.
          */
         MappedMemoryPointer pointerToMappedMemory = new MappedMemoryPointer();
-        VkResult result = vkMapMemory(
+        result = vkMapMemory(
                 vulkanLogicalDevice,
-                vertexStagingBufferInfo.bufferMemoryHandle,
+                vertexBufferDeviceMemoryHandle,
                 0,
-                totalSizeInBytes,
+                memoryAllocateInfo.getAllocationSize(),
                 EnumSet.noneOf(VkMemoryMapFlagBits.class),
                 pointerToMappedMemory);
         if (result != VkResult.VK_SUCCESS)
         {
-            throw new AssertionError("Failed to map memory: " + vkResultToString(result));
+            throw new AssertionError("Failed to map vertex memory: " + vkResultToString(result));
         }
 
         FloatBuffer floatBuffer = FloatBuffer.allocate(vertices.length * 5);
@@ -959,87 +696,7 @@ public class Test5
          */
         pushDataToVirtualMemory(floatBuffer, pointerToMappedMemory);
         
-        vkUnmapMemory(vulkanLogicalDevice, vertexStagingBufferInfo.bufferMemoryHandle);
-        
-        if (vertexBufferInformation == null)
-        {
-            vertexBufferInformation = createBuffer(
-                    totalSizeInBytes,
-                    EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT),
-                    EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
-        }
-        
-        /*
-         * It really does not make sense in this case to use a staging buffer
-         * since create vertex buffer is only called once during initialization.
-         * This is mainly just to show how it is done.
-         */
-        copyBuffer(vertexStagingBufferInfo.bufferHandle, vertexBufferInformation.bufferHandle, totalSizeInBytes);
-        
-        vkDestroyBuffer(vulkanLogicalDevice, vertexStagingBufferInfo.bufferHandle, null);
-        vkFreeMemory(vulkanLogicalDevice, vertexStagingBufferInfo.bufferMemoryHandle, null);
-        
-    }
-    
-    private void copyBuffer(VkBuffer sourceBuffer, VkBuffer destinationBuffer, long totalSizeInBytes)
-    {
-        VkCommandBufferAllocateInfo commandBufferAllocateInfo = new VkCommandBufferAllocateInfo();
-        commandBufferAllocateInfo.setLevel(VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        commandBufferAllocateInfo.setCommandPool(vulkanGraphicsCommandPoolHandle);
-        commandBufferAllocateInfo.setCommandBufferCount(1);
-        
-        ArrayList<VkCommandBuffer> commandBufferCollection = new ArrayList<VkCommandBuffer>();
-        commandBufferCollection.add(new VkCommandBuffer());
-        
-        VkResult result = vkAllocateCommandBuffers(vulkanLogicalDevice, commandBufferAllocateInfo, commandBufferCollection);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to allocate render command buffer: " + vkResultToString(result));
-        }
-
-        VkCommandBuffer commandBuffer = commandBufferCollection.get(0);
-        VkCommandBufferBeginInfo commandBufferBeginInfo = new VkCommandBufferBeginInfo();
-        commandBufferBeginInfo.setFlags(EnumSet.of(VkCommandBufferUsageFlagBits.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT));
-        
-        result = vkBeginCommandBuffer(commandBuffer, commandBufferBeginInfo);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to begin recording command buffer: " + vkResultToString(result));
-        }
-        
-        VkBufferCopy copyRegion = new VkBufferCopy(0L, 0L, totalSizeInBytes);
-        Collection<VkBufferCopy> copyRegionCollection = new LinkedList<VkBufferCopy>();
-        copyRegionCollection.add(copyRegion);
-        
-        vkCmdCopyBuffer(commandBuffer, sourceBuffer, destinationBuffer, copyRegionCollection);
-
-        result = vkEndCommandBuffer(commandBuffer);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to end recording command buffer: " + vkResultToString(result));
-        }
-
-        VkSubmitInfo submitInfo = new VkSubmitInfo();
-        submitInfo.setCommandBuffers(commandBuffer);
-        
-        Collection<VkSubmitInfo> submitInfoCollection = new LinkedList<VkSubmitInfo>();
-        submitInfoCollection.add(submitInfo);
-        
-        result = vkQueueSubmit(vulkanGraphicsCommandsQueue, submitInfoCollection, null);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to submit command to vulkanGraphicsCommandsQueue: " + vkResultToString(result));
-        }
-
-        /*
-         * I'm not sure if this should be here in a normal situation...this seems
-         * to drag to world to a stop just to do this buffer copy.  I am thinking
-         * that in a "production" case you would use a fence or something to allow
-         * this to be done asynchronously.
-         */
-        vkQueueWaitIdle(vulkanGraphicsCommandsQueue);
-        
-        vkFreeCommandBuffers(vulkanLogicalDevice, vulkanGraphicsCommandPoolHandle, submitInfo.getCommandBuffers());
+        vkUnmapMemory(vulkanLogicalDevice, vertexBufferDeviceMemoryHandle);
     }
     
     int findMemoryType(BitSet typeFilter, EnumSet<VkMemoryPropertyFlagBits> memoryPropertyFlags)
@@ -1210,7 +867,7 @@ public class Test5
             vkCmdBindPipeline(commandBuffer, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS, vulkanPipelineHandle);
             
             Collection<VkBuffer> bufferCollection = new LinkedList<VkBuffer>();
-            bufferCollection.add(vertexBufferInformation.bufferHandle);
+            bufferCollection.add(vertexBufferHandle);
             
             long[] offsets = new long[1];
             offsets[0] = 0L;
@@ -1218,20 +875,7 @@ public class Test5
             log.debug("Binding vertex buffer for swapchainRenderCommandBuffer {}", i);
             vkCmdBindVertexBuffers(commandBuffer, 0, bufferCollection, offsets);
 
-            vkCmdBindIndexBuffer(commandBuffer, indexBufferInformation.bufferHandle, 0L, VkIndexType.VK_INDEX_TYPE_UINT32);
-            
-            Collection<VkDescriptorSet> tempDescriptorSetCollection = new LinkedList<VkDescriptorSet>();
-            tempDescriptorSetCollection.add(descriptorSetHandles.get(i));
-            
-            vkCmdBindDescriptorSets(
-                    commandBuffer,
-                    VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    vulkanPipelineLayoutHandle,
-                    0,
-                    tempDescriptorSetCollection,
-                    null);
-            
-            vkCmdDrawIndexed(commandBuffer, indices.length, 1, 0, 0, 0);
+            vkCmdDraw(commandBuffer, 3, 1, 0, 0);
             
             vkCmdEndRenderPass(commandBuffer);
             
@@ -1298,10 +942,10 @@ public class Test5
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial2Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial2Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");
@@ -1392,7 +1036,7 @@ public class Test5
         rasterizationStateCreateInfo.setPolygonMode(VkPolygonMode.VK_POLYGON_MODE_FILL);
         rasterizationStateCreateInfo.setLineWidth(1.0f);
         rasterizationStateCreateInfo.setCullMode(EnumSet.of(VkCullModeFlagBits.VK_CULL_MODE_BACK_BIT));
-        rasterizationStateCreateInfo.setFrontFace(VkFrontFace.VK_FRONT_FACE_COUNTER_CLOCKWISE);
+        rasterizationStateCreateInfo.setFrontFace(VkFrontFace.VK_FRONT_FACE_CLOCKWISE);
         rasterizationStateCreateInfo.setDepthBiasEnable(false);
         rasterizationStateCreateInfo.setDepthBiasConstantFactor(0.0f);
         rasterizationStateCreateInfo.setDepthBiasClamp(0.0f);
@@ -1439,11 +1083,7 @@ public class Test5
         VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = new VkPipelineDynamicStateCreateInfo();
         dynamicStateCreateInfo.setDynamicStates(dynamicStateCollection);
         
-        Collection<VkDescriptorSetLayout> descriptorSetLayoutCollection = new LinkedList<VkDescriptorSetLayout>();
-        descriptorSetLayoutCollection.add(descriptorSetLayoutHandle);
-        
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo();
-        pipelineLayoutCreateInfo.setSetLayouts(descriptorSetLayoutCollection);
         
         vulkanPipelineLayoutHandle = new VkPipelineLayout();
         
@@ -2422,48 +2062,14 @@ public class Test5
         
         cleanupSwapchain(true);
         
-        log.trace("Attempting to destroy the descriptor pool.");
-        vkDestroyDescriptorPool(vulkanLogicalDevice, descriptorPoolHandle, null);
-        log.debug("Destroyed the descriptor pool.");
-
-        log.trace("Attempting to destroy the layout descriptor set.");
-        vkDestroyDescriptorSetLayout(vulkanLogicalDevice, descriptorSetLayoutHandle, null);
-        log.trace("Destroyed the layout descriptor set.");
-        
-        for (BufferInformation uniformBufferInfo : uniformBufferInformationCollection)
-        {
-            log.trace("Attempting to destroy the uniform buffer object.");
-            vkDestroyBuffer(vulkanLogicalDevice, uniformBufferInfo.bufferHandle, null);
-            log.debug("Destroyed the uniform buffer object.");
-            
-            log.trace("Releasing the iuniform buffer object memory.");
-            vkFreeMemory(vulkanLogicalDevice, uniformBufferInfo.bufferMemoryHandle, null);
-            log.debug("Released the iuniform buffer object memory.");
-        }
-        
-        uniformBufferInformationCollection.clear();
-        uniformBufferInformationCollection = null;
-        
-        log.trace("Attempting to destroy the index buffer.");
-        vkDestroyBuffer(vulkanLogicalDevice, indexBufferInformation.bufferHandle, null);
-        log.debug("Destroyed the index buffer.");
-        
-        log.trace("Releasing the index buffer memory.");
-        vkFreeMemory(vulkanLogicalDevice, indexBufferInformation.bufferMemoryHandle, null);
-        log.debug("Released the index buffer memory.");
-
         log.trace("Attempting to destroy the vertex buffer.");
-        vkDestroyBuffer(vulkanLogicalDevice, vertexBufferInformation.bufferHandle, null);
+        vkDestroyBuffer(vulkanLogicalDevice, vertexBufferHandle, null);
         log.debug("Destroyed the vertex buffer.");
 
-        log.trace("Releasing the vertex buffer memory.");
-        vkFreeMemory(vulkanLogicalDevice, vertexBufferInformation.bufferMemoryHandle, null);
-        log.debug("Released the vertex buffer memory.");
-        
-        log.trace("Waiting for presentation queue to go idle.");
-        vkQueueWaitIdle(vulkanPresentationCommandsQueue);
-        log.debug("Presentation queue is idle.");
-
+        //        log.trace("Waiting for presentation queue to go idle.");
+//        vkQueueWaitIdle(vulkanPresentationCommandsQueue);
+//        log.debug("Presentation queue is idle.");
+//
         log.trace("Attempting to destroy the imageAvailableSemaphores semaphores.");
         for (VkSemaphore handle : imageAvailableSemaphoreHandles)
         {
@@ -2613,8 +2219,6 @@ public class Test5
         
         indexToImage = imageIndex.getValue();
         log.debug("Swapchain image index is {}.", indexToImage);
-        
-        updateUniformBuffer(indexToImage);
 
         Collection<VkSemaphore> waitSemaphoreCollection = new LinkedList<VkSemaphore>();
         waitSemaphoreCollection.add(imageAvailableSemaphoreHandles.get(currentFrame));
@@ -2738,84 +2342,4 @@ public class Test5
         return shaderModule;
     }
     
-    private void updateUniformBuffer(int indexToCurrentImage)
-    {
-        /*
-         * Compute the time in ms between when we started and now.
-         */
-        long deltaTimeInms = Duration.between(startTime, Instant.now()).toMillis();
-        
-        /*
-         * We are going for 90 degrees per second or 1 revolution in 4 seconds.
-         */
-        
-        deltaTimeInms %= 4000;
-        
-        double angleInDegrees = ((double)deltaTimeInms/4000.0 * 360.0);
-        log.trace("Computed angle is {} degrees.", angleInDegrees);
-        
-        float angleInRadians = (float)Math.toRadians(angleInDegrees);
-        
-        uniformBufferObject.model = new Matrix4f().identity().rotate(angleInRadians, new Vector3f(0.0f, 0.0f, 1.0f));
-        uniformBufferObject.view = new Matrix4f().lookAt(
-                2.0f, 2.0f, 2.0f,
-                0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f);
-        uniformBufferObject.projection = new Matrix4f()
-                .perspective((float)Math.toRadians(45.0f),
-                        swapchainExtentUsed.getWidth() / 
-                        (float)swapchainExtentUsed.getHeight(), 0.1f, 10.0f);
-        
-        /*
-         * We need to flip the y axis because of the difference between OpenGL and Vulkan.
-         */
-        uniformBufferObject.projection.m11(uniformBufferObject.projection.m11() * -1);
-        
-        log.trace("UniformBufferObject {} total size is {}.", uniformBufferInformationCollection.get(indexToCurrentImage).bufferHandle, uniformBufferObject.sizeInBytes());
-//        ByteBuffer dataBuffer = org.lwjgl.system.MemoryUtil.memAlloc(uniformBufferObject.sizeInBytes());
-        
-//        FloatBuffer floatBuffer = dataBuffer.asFloatBuffer();
-        FloatBuffer floatBuffer = FloatBuffer.allocate(16 * 3);
-
-        float modelData[] = new float[16];
-        uniformBufferObject.model.get(modelData);
-        
-        float viewData[] = new float[16];
-        uniformBufferObject.view.get(viewData);
-        
-        float projectionData[] = new float[16];
-        uniformBufferObject.projection.get(projectionData);
-        
-        for (int i = 0; i < 16; i++)
-        {
-            floatBuffer.put(modelData[i]);
-        }
-        
-        for (int i = 0; i < 16; i++)
-        {
-            floatBuffer.put(viewData[i]);
-        }
-        
-        for (int i = 0; i < 16; i++)
-        {
-            floatBuffer.put(projectionData[i]);
-        }
-        
-        MappedMemoryPointer pointerToMappedMemory = new MappedMemoryPointer();
-        VkResult result = vkMapMemory(
-                vulkanLogicalDevice,
-                uniformBufferInformationCollection.get(indexToCurrentImage).bufferMemoryHandle,
-                0,
-                uniformBufferObject.sizeInBytes(),
-                EnumSet.noneOf(VkMemoryMapFlagBits.class),
-                pointerToMappedMemory);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new AssertionError("Failed to map memory: " + vkResultToString(result));
-        }
-        
-        pushDataToVirtualMemory(floatBuffer, pointerToMappedMemory);
-        
-        vkUnmapMemory(vulkanLogicalDevice, uniformBufferInformationCollection.get(indexToCurrentImage).bufferMemoryHandle);
-    }
 }

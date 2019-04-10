@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;

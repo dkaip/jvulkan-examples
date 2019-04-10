@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.VK_MAKE_VERSION;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.pushDataToVirtualMemory;
@@ -289,7 +289,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
  * 
  * @author Douglas Kaip
  *
- */public class Test9
+ */public class Test8
 {
     private Logger log;
 
@@ -305,9 +305,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     
     private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
-//    // GLFW items
-//    private long windowHandle;
-//    private long windowSurfaceHandle;
     private int     windowWidth     = 1024;
     private int     windowHeight    = 768;
     
@@ -344,7 +341,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     private VkPipelineLayout        vulkanPipelineLayoutHandle;
     private VkPipeline              vulkanPipelineHandle;
     private VkCommandPool           vulkanGraphicsCommandPoolHandle;
-
 
 
     private SwapchainSupportDetails     swapchainSupportDetails;
@@ -414,9 +410,9 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     private ArrayList<Integer> indices = new ArrayList<Integer>();
 
-    public Test9()
+    public Test8()
     {
-        log = LoggerFactory.getLogger("jvulkan-exampl");
+        log = LoggerFactory.getLogger("jvulkan-example");
         
         String architectureDataModel = System.getProperty("sun.arch.data.model");
         String operatingSystem = System.getProperty("os.name").toLowerCase();
@@ -462,7 +458,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
     public static void main(String[] args)
     {
-        Test9 test = new Test9();
+        Test8 test = new Test8();
         
         test.init();
         
@@ -551,11 +547,6 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         log.debug("Shell surface created {}", waylandShellSurface.toString());
         
         wlShellSetTopLevel(waylandShellSurface);
-        
-//        log.trace("Dispatching");
-//        wlDisplayDispatch(waylandDisplay);
-//        log.trace("Waiting for round trip");
-//        wlRoundTrip(waylandDisplay);
     }
     
     private void cleanupWaylandWindow()
@@ -788,7 +779,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
                 }
                 else
                 {
-                    log.warn("Unhandled format of \"{}\" encountered.", inputLine);
+                    log.warn("Unhandled format of {} encountered.", inputLine);
                 }
 
                 inputLine = bufferedReader.readLine();
@@ -2000,10 +1991,10 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial9Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial9Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");
@@ -3295,7 +3286,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
         log.debug("Entering main loop.");
         int i = 0;
-        while(i++ < 200)
+        while(i++ < 100)
         {
 //      while(glfwWindowShouldClose(windowHandle) == false)
 //        {
@@ -3345,7 +3336,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
             /*
              * This is here to slow the frame rate down a little.
              */
-            Thread.sleep(33);
+            Thread.sleep(100);
         }
         catch (InterruptedException e)
         {
@@ -3359,10 +3350,10 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         Collection<VkFence> fenceCollection = new LinkedList<VkFence>();
         fenceCollection.add(inFlightFenceHandles.get(currentFrame));
         
-//        log.trace("Frame {} Waiting on fence {}", currentFrame, inFlightFenceHandles.get(currentFrame));
+        log.trace("Frame {} Waiting on fence {}", currentFrame, inFlightFenceHandles.get(currentFrame));
         vkWaitForFences(vulkanLogicalDevice, fenceCollection, true, UINT64_MAX);
         vkResetFences(vulkanLogicalDevice, fenceCollection);
-//        log.trace("Frame {} Fence {} released.", currentFrame, inFlightFenceHandles.get(currentFrame));
+        log.trace("Frame {} Fence {} released.", currentFrame, inFlightFenceHandles.get(currentFrame));
         
         IntReturnValue imageIndex = new IntReturnValue(); 
         result = vkAcquireNextImageKHR(
@@ -3395,7 +3386,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         }
         
         indexToImage = imageIndex.getValue();
-//        log.debug("Swapchain image index is {}.", indexToImage);
+        log.debug("Swapchain image index is {}.", indexToImage);
         
         updateUniformBuffer(indexToImage);
 
@@ -3463,7 +3454,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
         
         currentFrame++;
         currentFrame %= MAX_FRAMES_IN_FLIGHT;
-//        log.trace("Current frame is {}", currentFrame);
+        log.trace("Current frame is {}", currentFrame);
     }
 
     private class SwapchainSupportDetails
@@ -3532,21 +3523,21 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
          * We are going for 90 degrees per second or 1 revolution in 4 seconds.
          */
         
-        deltaTimeInms %= 32000;
+        deltaTimeInms %= 4000;
         
-        double angleInDegrees = ((double)deltaTimeInms/32000.0 * 360.0);
+        double angleInDegrees = ((double)deltaTimeInms/4000.0 * 360.0);
         log.trace("Computed angle is {} degrees.", angleInDegrees);
         
         float angleInRadians = (float)Math.toRadians(angleInDegrees);
         
         uniformBufferObject.model = new Matrix4f().identity().rotate(angleInRadians, new Vector3f(0.0f, 0.0f, 1.0f));
         uniformBufferObject.view = new Matrix4f().lookAt(
-                1.5f, 1.5f, 1.5f,
+                2.0f, 2.0f, 2.0f,
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f);
         uniformBufferObject.projection = new Matrix4f()
                 .perspective((float)Math.toRadians(45.0f),
-                        (float)swapchainExtentUsed.getWidth() / 
+                        swapchainExtentUsed.getWidth() / 
                         (float)swapchainExtentUsed.getHeight(), 0.1f, 10.0f);
         
         /*
@@ -3554,7 +3545,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
          */
         uniformBufferObject.projection.m11(uniformBufferObject.projection.m11() * -1);
         
-//        log.trace("UniformBufferObject {} total size is {}.", uniformBufferInformationCollection.get(indexToCurrentImage).bufferHandle, uniformBufferObject.sizeInBytes());
+        log.trace("UniformBufferObject {} total size is {}.", uniformBufferInformationCollection.get(indexToCurrentImage).bufferHandle, uniformBufferObject.sizeInBytes());
 //        ByteBuffer dataBuffer = org.lwjgl.system.MemoryUtil.memAlloc(uniformBufferObject.sizeInBytes());
         
 //        FloatBuffer floatBuffer = dataBuffer.asFloatBuffer();

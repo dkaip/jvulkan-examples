@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.VK_MAKE_VERSION;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.pushDataToVirtualMemory;

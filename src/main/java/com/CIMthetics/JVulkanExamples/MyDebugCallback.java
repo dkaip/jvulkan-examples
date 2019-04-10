@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import java.util.EnumSet;
 

@@ -1,4 +1,4 @@
-package com.CIMthetics.hwjviClient;
+package com.CIMthetics.JVulkanExamples;
 
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SURFACE_EXTENSION_NAME;
@@ -12,10 +12,11 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAllocateM
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkBeginCommandBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkBindBufferMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBeginRenderPass;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindIndexBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindPipeline;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdBindVertexBuffers;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdCopyBuffer;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdDraw;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdDrawIndexed;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdEndRenderPass;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateCommandPool;
@@ -83,25 +84,12 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRoundTrip
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellGetShellSurface;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellSetTopLevel;
 import static com.CIMthetics.jvulkan.VulkanCore.VKUtil.vkResultToString;
-//import static org.lwjgl.glfw.GLFW.GLFW_CLIENT_API;
-//import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
-//import static org.lwjgl.glfw.GLFW.GLFW_NO_API;
-//import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-//import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-//import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
-//import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-//import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-//import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-//import static org.lwjgl.glfw.GLFW.glfwInit;
-//import static org.lwjgl.glfw.GLFW.glfwTerminate;
-//import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-//import static org.lwjgl.glfw.GLFWVulkan.glfwVulkanSupported;
-//import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -135,6 +123,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageAspectFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageLayout;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageUsageFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageViewType;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkIndexType;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkInstanceCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkLogicOp;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkMemoryMapFlagBits;
@@ -243,13 +232,13 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurface;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
 /**
- * This is the vulkan tutorial beginning with the staging buffer
+ * This is the vulkan tutorial beginning with the index buffer
  * section of the VertexBuffers chapter.
  * 
  * @author Douglas Kaip
  *
  */
-public class Test3
+public class Test4
 {
     private Logger log;
 
@@ -327,6 +316,7 @@ public class Test3
     private String shaderPath = null;
     
     private BufferInformation       vertexBufferInformation = null;
+    private BufferInformation       indexBufferInformation = null;
 
     private class BufferInformation
     {
@@ -374,7 +364,9 @@ public class Test3
     
     private Vertex[] vertices;
     
-    public Test3()
+    private int[] indices = new int[] {0, 1, 2, 0, 2, 3};
+
+    public Test4()
     {
         log = LoggerFactory.getLogger("jvulkan-example");
         
@@ -417,33 +409,38 @@ public class Test3
         @SuppressWarnings("unused")
         VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
         
-        vertices = new Vertex[3];
+        vertices = new Vertex[4];
         
         Color color;
         Position position;
         Vertex vertex;
         
-        color = new Color(1.0f, 1.0f, 1.0f);
-        position = new Position(0.0f, -0.5f);
+        color = new Color(1.0f, 0.0f, 0.0f);
+        position = new Position(-0.5f, -0.5f);
         vertex = new Vertex(position, color);
         vertices[0] = vertex;
 
         color = new Color(0.0f, 1.0f, 0.0f);
-        position = new Position(0.5f, 0.5f);
+        position = new Position(0.5f, -0.5f);
         vertex = new Vertex(position, color);
         vertices[1] = vertex;
 
         color = new Color(0.0f, 0.0f, 1.0f);
-        position = new Position(-0.5f, 0.5f);
+        position = new Position(0.5f, 0.5f);
         vertex = new Vertex(position, color);
         vertices[2] = vertex;
+
+        color = new Color(1.0f, 1.0f, 1.0f);
+        position = new Position(-0.5f, 0.5f);
+        vertex = new Vertex(position, color);
+        vertices[3] = vertex;
 
     }
     
 
     public static void main(String[] args)
     {
-        Test3 test = new Test3();
+        Test4 test = new Test4();
         
         test.init();
         
@@ -599,10 +596,65 @@ public class Test3
         
         createVertexBuffer();
         
+        createIndexBuffer();
+        
         createCommandBuffers();
         
         createSyncObjects();
     }
+    
+    private void createIndexBuffer()
+    {
+        int indexBufferSizeInBytes = indices.length * 4 /* sizeof int in bytes */;
+
+        BufferInformation stagingBufferInfo = createBuffer(
+                (long)indexBufferSizeInBytes,
+                EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
+                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
+        
+        MappedMemoryPointer pointerToMappedMemory = new MappedMemoryPointer();
+        VkResult result = vkMapMemory(
+                vulkanLogicalDevice,
+                stagingBufferInfo.bufferMemoryHandle,
+                0,
+                indexBufferSizeInBytes,
+                EnumSet.noneOf(VkMemoryMapFlagBits.class),
+                pointerToMappedMemory);
+        if (result != VkResult.VK_SUCCESS)
+        {
+            throw new AssertionError("Failed to map memory: " + vkResultToString(result));
+        }
+
+        IntBuffer intBuffer = IntBuffer.allocate(indices.length);
+        for (int i = 0; i < indices.length; i++)
+        {
+            intBuffer.put(indices[i]);
+        }
+
+        /*
+         * Now we need to copy our vertex data into the virtual memory that the
+         * graphics card will use to access the data.
+         * 
+         * Since this memory is in virtual address space i.e. outside the, for
+         * lack of a better word, Java object reference space we need to use
+         * a native method that can access both memory spaces.
+         */
+        pushDataToVirtualMemory(intBuffer, pointerToMappedMemory);
+        
+        vkUnmapMemory(vulkanLogicalDevice, stagingBufferInfo.bufferMemoryHandle);
+        
+        indexBufferInformation = createBuffer(
+                indexBufferSizeInBytes,
+                EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
+                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+
+        log.debug("Copying index buffer into device local storage");
+        copyBuffer(stagingBufferInfo.bufferHandle, indexBufferInformation.bufferHandle, indexBufferSizeInBytes);
+        log.debug("Copied index buffer into device local storage");
+
+        vkDestroyBuffer(vulkanLogicalDevice, stagingBufferInfo.bufferHandle, null);
+        vkFreeMemory(vulkanLogicalDevice, stagingBufferInfo.bufferMemoryHandle, null);
+}
     
     private BufferInformation createBuffer(
             long bufferSizeInBytes,
@@ -681,7 +733,7 @@ public class Test3
     {
         int positionSize = 2 /* for x and y */ * 4 /* for size of float */;
         int colorSize = 3 /* for r, g, b, */ * 4 /* for size of float */;
-        int totalSizeInBytes = (positionSize + colorSize) * 3 /* for 3 vertices */;
+        int totalSizeInBytes = (positionSize + colorSize) * 4 /* for 4 vertices */;
         
         BufferInformation vertexStagingBufferInfo = createBuffer(
                 (long)totalSizeInBytes,
@@ -783,8 +835,6 @@ public class Test3
         
         vkCmdCopyBuffer(commandBuffer, sourceBuffer, destinationBuffer, copyRegionCollection);
 
-        vkEndCommandBuffer(commandBuffer);
-        
         result = vkEndCommandBuffer(commandBuffer);
         if (result != VkResult.VK_SUCCESS)
         {
@@ -990,7 +1040,9 @@ public class Test3
             log.debug("Binding vertex buffer for swapchainRenderCommandBuffer {}", i);
             vkCmdBindVertexBuffers(commandBuffer, 0, bufferCollection, offsets);
 
-            vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+            vkCmdBindIndexBuffer(commandBuffer, indexBufferInformation.bufferHandle, 0L, VkIndexType.VK_INDEX_TYPE_UINT32);
+            
+            vkCmdDrawIndexed(commandBuffer, indices.length, 1, 0, 0, 0);
             
             vkCmdEndRenderPass(commandBuffer);
             
@@ -1057,10 +1109,10 @@ public class Test3
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial3Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial4Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial3Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial4Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");
@@ -2177,6 +2229,14 @@ public class Test3
         
         cleanupSwapchain(true);
         
+        log.trace("Attempting to destroy the index buffer.");
+        vkDestroyBuffer(vulkanLogicalDevice, indexBufferInformation.bufferHandle, null);
+        log.debug("Destroyed the index buffer.");
+        
+        log.trace("Releasing the index buffer memory.");
+        vkFreeMemory(vulkanLogicalDevice, indexBufferInformation.bufferMemoryHandle, null);
+        log.debug("Released the index buffer memory.");
+
         log.trace("Attempting to destroy the vertex buffer.");
         vkDestroyBuffer(vulkanLogicalDevice, vertexBufferInformation.bufferHandle, null);
         log.debug("Destroyed the vertex buffer.");
