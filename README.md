@@ -1,6 +1,6 @@
 # jvulkan-examples
 
-jvulkan-examples is a collection of Java programs that demonstrate the use of the jvulkan Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the Vulkan Tutorial that can be found online (in c++).
+<b>jvulkan-examples</b> is a collection of Java programs that demonstrate the use of the <b>jvulkan</b> Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the <b>Vulkan Tutorial</b> that can be found online (in c++).  For more information refer to the [Vulkan Tutorial](https://vulkan-tutorial.com/).
 
 ## Installation
 
