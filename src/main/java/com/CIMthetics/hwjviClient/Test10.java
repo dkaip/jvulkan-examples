@@ -339,6 +339,8 @@ public class Test10
     private VkDescriptorPool            descriptorPoolHandle;
     private ArrayList<VkDescriptorSet>  descriptorSetHandles = new ArrayList<VkDescriptorSet>();
     
+    private String shaderPath = null;
+    
     private Instant                 startTime = Instant.now();
 
     private class BufferInformation
@@ -434,6 +436,17 @@ public class Test10
             System.exit(-1);
         }
         
+        shaderPath = System.getProperty("jvulkan-examples.shader.path", "NotFound");
+        if (shaderPath.equals("NotFound") == true)
+        {
+            log.error("A valid path to the location of the shaders (.spv files) must be specified with the jvulkan-examples.shader.path command line argument.");
+            log.error("i.e. java -Djvulkan.native.library.path=\"/myprojects/myshaders/\".");
+            System.exit(-1);
+        }
+
+        if (shaderPath.endsWith("/") == false)
+            shaderPath = shaderPath + "/";
+
         @SuppressWarnings("unused")
         VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
         
@@ -1298,11 +1311,11 @@ public class Test10
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/hwjviClient/src/main/resources/VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
 //                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial5Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/hwjviClient/src/main/resources/VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
 //                    loadShader("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/VulkanTutorial5Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
