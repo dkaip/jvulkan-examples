@@ -2,16 +2,6 @@
 <configuration status="debug" strict="true" name="XMLConfigTest" packages="com.CIMthetics">
   <properties>
     <property name="filename">bin/logger.log</property>
-<!--
-    <property name="CoreOutputLogFile">bin/J3D_CoreOutput.log</property>
-    <property name="DevOutputLogFile">bin/J3D_DevOutput.log</property>
-    <property name="StatsOutputLogFile">bin/J3D_StatsOutput.log</property>
--->
-    <!-- <property name="DevOutputLogFile">${sys:fileoutput.directory}BackEnd.log</property> -->
-    <!--
-        <property name="IncomingRequests">target/requests.log</property>
-        <property name="TransactionLogFile">transactions.log</property>
-    -->
   </properties>
   <filter type="ThresholdFilter" level="Trace"/>
  
@@ -29,44 +19,6 @@
         <pattern>%d %p %C{1.} [%t] %m%n</pattern>
       </layout>
     </appender>
-<!--
-    <appender type="File" name="CoreOutput" fileName="${CoreOutputLogFile}">
-      <layout type="PatternLayout">
-        <pattern>%d %p %C{1.} [%t] %m%n</pattern>
-      </layout>
-    </appender>
-    <appender type="File" name="DevOutput" fileName="${DevOutputLogFile}">
-      <layout type="PatternLayout">
-        <pattern>%d %p %C{1.} [%t] %m%n</pattern>
-      </layout>
-    </appender>
-    <appender type="File" name="StatsOutput" fileName="${StatsOutputLogFile}">
-      <layout type="PatternLayout">
-        <pattern>%d %p %C{1.} [%t] %m%n</pattern>
-      </layout>
-    </appender>
--->
-    <!--
-    <RollingFile name="TransactionLogger" fileName="${sys:fileoutput.directory}${TransactionLogFile}" filePattern="${sys:fileoutput.directory}transactions-%i.log">
-      <layout type="PatternLayout">
-        <pattern>%m%n</pattern>
-      </layout>
-      <Policies>
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-      </Policies>
-      <Strategy>
-        <DefaultRolloverStrategy/>
-      </Strategy>
-      
-    </RollingFile>
-    -->
-<!--
-    <appender type="File" name="IncomingRequests" fileName="${IncomingRequests}">
-      <layout type="PatternLayout">
-        <pattern>%m%n</pattern>
-      </layout>
-    </appender>
--->
   </appenders>
  
   <loggers>
@@ -74,20 +26,6 @@
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="File"/>
     </logger>
-<!--
-    <logger name="j3d.core" level="Trace" additivity="false">
-      <appender-ref ref="STDOUT"/>
-      <appender-ref ref="CoreOutput"/>
-    </logger>
-    <logger name="j3d.developer" level="Trace" additivity="false">
-      <appender-ref ref="STDOUT"/>
-      <appender-ref ref="DevOutput"/>
-    </logger>
-    <logger name="j3d.stats" level="Trace" additivity="false">
-      <appender-ref ref="STDOUT"/>
-      <appender-ref ref="StatsOutput"/>
-    </logger>
--->
     <root level="WARN">
       <appender-ref ref="FLOW"/>
     </root>
