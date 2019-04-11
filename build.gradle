@@ -10,6 +10,7 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 
 ext {
+    LOG4J2_CONFIG_FILE = '../src/main/resources/log4j2.xml'
     VULKAN_VALIDATION = 'true'
     VULKAN_NATIVE_LIBRARY_PATH = '/home/dkaip/git/jvulkan-natives-Linux-x86_64/Release'
 //    PROJECT_SHADER_PATH = '/home/dkaip/JavaWorkspaces/CIMthetics/hwjviClient/src/main/resources/'

@@ -9,4 +9,5 @@ mainClassName = 'com.CIMthetics.JVulkanExamples.Test9'
 applicationDefaultJvmArgs = ["-Dvulkan.validation=${rootProject.ext.VULKAN_VALIDATION}",
                              "-Djvulkan.native.library.path=${rootProject.ext.VULKAN_NATIVE_LIBRARY_PATH}",
                              "-Djvulkan-examples.shader.path=${rootProject.ext.PROJECT_SHADER_PATH}",
-                             "-Djvulkan-examples.textures.path=${rootProject.ext.PROJECT_TEXTURES_PATH}"]
+                             "-Djvulkan-examples.textures.path=${rootProject.ext.PROJECT_TEXTURES_PATH}",
+                             "-Dlog4j.configurationFile=${rootProject.ext.LOG4J2_CONFIG_FILE}"]
