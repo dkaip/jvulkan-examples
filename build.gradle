@@ -6,45 +6,57 @@
  * user guide available at https://docs.gradle.org/4.3/userguide/java_library_plugin.html
  */
 
-// Apply the java-library plugin to add support for Java Library
-apply plugin: 'java'
-apply plugin: 'application'
 apply plugin: 'eclipse'
+apply plugin: 'java'
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    mavenLocal();
-    jcenter()
+ext {
+    VULKAN_VALIDATION = 'true'
+    VULKAN_NATIVE_LIBRARY_PATH = '/home/dkaip/git/jvulkan-natives-Linux-x86_64/Release'
+//    PROJECT_SHADER_PATH = '/home/dkaip/JavaWorkspaces/CIMthetics/hwjviClient/src/main/resources/'
+    PROJECT_SHADER_PATH = '../src/main/resources/'
+    PROJECT_TEXTURES_PATH = '../src/main/resources/'
 }
 
-dependencies {
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-
-    compile group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
-
-    compile group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
-    compile group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
-    compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
-    compile group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+subprojects {
+    // Apply the java-library plugin to add support for Java Library
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
     
-//    compile group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
-//    compile group: 'org.lwjgl', name: 'lwjgl-bgfx', version: '3.1.7-SNAPSHOT'
-//    compile group: 'org.lwjgl', name: 'lwjgl-assimp', version: '3.1.7-SNAPSHOT'
-//    compile group: 'org.eclipse.swt', name: 'org.eclipse.swt.gtk.linux.x86_64', version:'4.6.1'
+        repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
 
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
-    runtime group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-
-    runtime group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
-
-    runtime group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
-    runtime group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
-    runtime group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
-    runtime group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+    dependencies {
+        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.11.2'
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta4'
+        
+        compile group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
+    
+        compile group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
+        compile group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
+        compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
+        compile group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+        
+        compile group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.1'
+        
+        runtime project (':common')
+        
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.2'
+        runtime group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta4'
+        
+        runtime group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
+    
+        runtime group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
+        runtime group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
+        runtime group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
+        runtime group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+        
+        runtime group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.1'
+        runtime group: 'com.CIMthetics', name: 'libjvulkan-natives-Linux-x86_64', version: '0.0.1'
+    }
+    
 }
-

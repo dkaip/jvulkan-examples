@@ -1,0 +1,39 @@
+// apply plugin: 'java'
+apply plugin: 'eclipse'
+
+/*
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.2'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta4'
+    
+    compile group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
+
+    compile group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
+    compile group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
+    compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
+    compile group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+    
+    compile group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.1'
+    
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.2'
+    runtime group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta4'
+    
+    runtime group: 'org.joml', name: 'joml', version: '1.9.9-SNAPSHOT'
+
+    runtime group: 'org.lwjgl', name: 'lwjgl', version: '3.1.7-SNAPSHOT'
+    runtime group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.1.7-SNAPSHOT'
+    runtime group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
+    runtime group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
+    
+    runtime group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.1'
+    runtime group: 'com.CIMthetics', name: 'libjvulkan-natives-Linux-x86_64', version: '0.0.1'
+}
+*/
