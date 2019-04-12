@@ -58,6 +58,24 @@ If you would like to see debug information for Wayland, set the <code>WAYLAND_DE
 debug information set the <code>WAYLAND_DEBUG</code> environment variable to the value of <code>0</code> (zero) 
 before you execute the <code>gradle run</code> command.
 
+## eclipse
+I was able to use <code>git</code> to extract the code from the repository.  Once the code was in a 
+directory on my machine, in this case <code>./jvulkan-examples</code>, I executed the command 
+<code>gradle cleanEclipse eclipse</code>. Next, I started eclipse and performed an 
+"import an existing gradle project" into eclipse. It to loaded the project successfully.  
+
+Once loaded, I was able to select a (sub)module, i.e. <code>Test6</code>, then I selected run configurations.
+I was able to create a new run configuration that had the proper dependencies already filled in.  Next, in 
+the <code>Arguments</code> tab of the run configuration put the following into the VM arguments section:  
+
+<code>-Dvulkan.validation=true -Djvulkan.native.library.path="/home/dkaip/git/jvulkan-natives-Linux-x86_64/Release" -Djvulkan-examples.shader.path="../src/main/resources/" -Djvulkan-examples.textures.path="../src/main/resources/" -Dlog4j.configurationFile="../src/main/resources/log4j2.xml"</code>  
+
+If, for some reason, the <code>Main class:</code> did not get filled in, in this case, you would put 
+<code>com.CIMthetics.JVulkanExamples.Test6</code> for its value.  
+
+With a run configuration created you should be able to run the example in either Debug or non-Debug modes 
+from inside the eclipse IDE.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.  
 
