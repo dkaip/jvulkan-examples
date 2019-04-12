@@ -269,9 +269,6 @@ public class Test2
     
     private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
-//    // GLFW items
-//    private long windowHandle;
-//    private long windowSurfaceHandle;
     private int     windowWidth     = 1024;
     private int     windowHeight    = 768;
     
@@ -452,8 +449,6 @@ public class Test2
 
     private void init()
     {
-//        initGLFWWindow();
-        
         initWaylandWindow();
         initVulkan();
     }
@@ -532,11 +527,6 @@ public class Test2
         log.debug("Shell surface created {}", waylandShellSurface.toString());
         
         wlShellSetTopLevel(waylandShellSurface);
-        
-//        log.trace("Dispatching");
-//        wlDisplayDispatch(waylandDisplay);
-//        log.trace("Waiting for round trip");
-//        wlRoundTrip(waylandDisplay);
     }
     
     private void cleanupWaylandWindow()
@@ -1383,17 +1373,6 @@ public class Test2
         }
         else
         {
-//            IntBuffer pWidth = memAllocInt(1);
-//            IntBuffer pHeight = memAllocInt(1);
-//            
-//            glfwGetFramebufferSize(windowHandle, pWidth, pHeight);
-//            
-//            windowWidth = pWidth.get(0);
-//            windowHeight = pHeight.get(0);
-//            
-//            memFree(pWidth);
-//            memFree(pHeight);
-//            
             VkExtent2D actualExtent = new VkExtent2D(windowWidth, windowHeight);
             
             int winW = Math.max(
@@ -1581,16 +1560,6 @@ public class Test2
         }
         
         log.debug("VkSurfaceKHR created");
-        //        LongBuffer pSurface = memAllocLong(1);
-//        int result = glfwCreateWindowSurface(vulkanInstance, windowHandle, null, pSurface);
-//        windowSurfaceHandle = pSurface.get(0);
-//        if (result != VK_SUCCESS)
-//        {
-//            throw new AssertionError("Failed to create surface: " + translateVulkanResult(result));
-//        }
-//        
-//        log.trace("Window surface created.");
-//        memFree(pSurface);
     }
     
     private void createGraphicsCommandQueue()
@@ -1874,14 +1843,6 @@ public class Test2
         
         log.trace("Created the Vulkan application information.");
         
-        // FIXME
-//        /* Look for instance extensions */
-//        PointerBuffer requiredExtensions = glfwGetRequiredInstanceExtensions();
-//        if (requiredExtensions == null)
-//        {
-//            throw new AssertionError("Failed to find list of required Vulkan extensions");
-//        }
-//
         ArrayList<String> requiredExtensions = new ArrayList<String>();
         requiredExtensions.add(VK_KHR_SURFACE_EXTENSION_NAME);
         
@@ -1929,7 +1890,6 @@ public class Test2
             debugReportCallbackCreateInfoEXT.setCallbackObject(myDebugCallback);
             
             debugReportCallbackCreateInfoEXT.setUserData(null);
-//                debugReportCallbackCreateInfoEXT.setUserData(userData);
             
             debugCallbackHandle = new VkDebugReportCallbackEXT();
             result = vkCreateDebugReportCallbackEXT(
@@ -1948,72 +1908,17 @@ public class Test2
         }
     }
     
-//    private void initGLFWWindow()
-//    {
-//        log.trace("Attempting to initialize glfw.");
-//        if (glfwInit() == false)
-//        {
-//            throw new RuntimeException("Failed to initialize GLFW");
-//        }
-//        log.debug("glfw initialized.");
-//        
-//        log.trace("Checking for Vulkan support.");
-//        if (glfwVulkanSupported() == false)
-//        {
-//            throw new AssertionError("GLFW failed to find the Vulkan loader");
-//        }
-//        log.debug("Vulkan support is available.");
-//
-//        // Create GLFW window
-//        glfwDefaultWindowHints();
-//        
-//        // Tell GLFW not to create an OpenGL context
-//        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-//        
-//        /*
-//         *  Set the window so it is not visible until shown
-//         *  (glfwShowWindow())
-//         */
-//        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-//        
-//        // For now, disable window resize
-//        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-//        
-//        log.trace("Attemping to create the GLFW window");
-//        windowHandle = glfwCreateWindow(windowWidth, windowHeight, "Vulkan Tutorial", NULL, NULL);
-//        
-//        if (windowHandle == 0)
-//        {
-//            log.error("window creation was not successful.");
-//
-//            throw new AssertionError("GLFW window creation was not successful.");
-//        }
-//        else
-//            log.debug("GLFW window creation was successful.");
-//    }
-//    
     public void cleanup()
     {
         log.trace("Attemping to clean up Vulkan.");
         cleanupVulkan();
         log.debug("Cleaned up Vulkan.");
         
-//        log.trace("Attemping to clean up GLFW.");
-//        cleanupGLFW();
-//        log.debug("Cleaned up GLFW.");
-
         log.trace("Attemping to clean up Wayland.");
         cleanupWaylandWindow();
         log.debug("Cleaned up Wayland.");
     }
     
-//    private void cleanupGLFW()
-//    {
-//        glfwDestroyWindow(windowHandle);
-//        
-//        glfwTerminate();
-//    }
-//    
     private void cleanupSwapchain(boolean shuttingDown)
     {
         log.trace("Attempting to destroy the framebuffers.");
@@ -2081,7 +1986,7 @@ public class Test2
         vkDestroyBuffer(vulkanLogicalDevice, vertexBufferHandle, null);
         log.debug("Destroyed the vertex buffer.");
 
-        //        log.trace("Waiting for presentation queue to go idle.");
+//        log.trace("Waiting for presentation queue to go idle.");
 //        vkQueueWaitIdle(vulkanPresentationCommandsQueue);
 //        log.debug("Presentation queue is idle.");
 //
@@ -2129,16 +2034,10 @@ public class Test2
     
     private void mainLoop()
     {
-//        glfwShowWindow(windowHandle);
-
         log.debug("Entering main loop.");
         int i = 0;
         while(i++ < 100)
         {
-//      while(glfwWindowShouldClose(windowHandle) == false)
-//        {
-//            glfwPollEvents();
-        
             drawFrame();
         }
         
@@ -2265,7 +2164,6 @@ public class Test2
         Collection<VkSwapchainKHR> swapchainHandleCollection = new LinkedList<VkSwapchainKHR>();
         swapchainHandleCollection.add(vulkanSwapchainHandle);
         
-//        Collection<VkResult> resultsCollection = new LinkedList<VkResult>();
         Collection<VkResult> resultsCollection = null;
         
         int[] imageIndexArray = new int[1];
@@ -2287,15 +2185,6 @@ public class Test2
         {
             throw new AssertionError("Failed to submit command to vulkanPresentationCommandsQueue: " + vkResultToString(result));
         }
-        
-//        if (resultsCollection != null)
-//        {
-//            log.debug("ResultsCollection size is {}.", resultsCollection.size());
-//            for (VkResult aResult : resultsCollection)
-//            {
-//                log.debug("Result is {}", aResult.toString());
-//            }
-//        }
         
         currentFrame++;
         currentFrame %= MAX_FRAMES_IN_FLIGHT;
@@ -2334,7 +2223,6 @@ public class Test2
         
         int fileLength = (int)inputChannel.size();
         
-//        ByteBuffer shaderCode = ByteBuffer.allocateDirect(fileLength);
         ByteBuffer shaderCode = ByteBuffer.allocate(fileLength);
         
         inputChannel.read(shaderCode);
