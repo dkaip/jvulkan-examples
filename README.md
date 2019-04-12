@@ -1,6 +1,17 @@
 # jvulkan-examples
 
-**jvulkan-examples** is a collection of Java programs that demonstrate the use of the **jvulkan** Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the **Vulkan Tutorial** that can be found online (written in c++).  For more information refer to the [Vulkan Tutorial](https://vulkan-tutorial.com/).
+**jvulkan-examples** is a collection of Java programs that demonstrate the use of the **jvulkan** Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the **Vulkan Tutorial** that can be found online (written in c++).  For more information refer to the [Vulkan Tutorial](https://vulkan-tutorial.com/).  
+
+Do not expect this software to work if you do not have Vulkan drivers available on your 
+machine for your graphics card.  It has been running just fine on a Radeon RX460 with 4GB of RAM.
+
+In addition, at the moment you will need a Wayland compositor available as well.  If you are using
+Gnome, this is available as the default when you log on to a windows desktop.  I believe there are a 
+number of Linux Distros with a Wayland compositor available.  Hopefully before too long, the 
+integration of the other <code>WSI</code> options (<code>Android Platform</code>, 
+<code>Win32 Platform</code>, <code>XCB Platform</code>, <code>Xlib Platform</code>) will be completed 
+and available for use.
+
 
 ## Installation
 At the current time this software has only been built and run on a 64-bit Linux distribution (at this point 
