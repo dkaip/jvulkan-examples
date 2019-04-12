@@ -21,7 +21,7 @@ Also, at the current time the <code>WSI</code> method used is Wayland.
 
 ### Prerequisites
 
-You will need to have a local Maven repository.  I believe it will be created at the first use of 
+You will need to have a local Maven repository.  I believe it will be created automatically at the first use of 
 any Maven(<code>mvn</code>) command.  
 
 Retrieve and build the <code>jvulkan-natives-Linux-x86_64</code> project.  Refer to its 
