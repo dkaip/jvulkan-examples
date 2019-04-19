@@ -13,16 +13,18 @@ public class MyDebugCallback implements VkDebugReportCallback
     private Logger log = LoggerFactory.getLogger("HWJVI_Client");;
 
     @Override
-    public boolean invoke(EnumSet<VkDebugReportFlagBitsEXT> flags, int objectType,
-            long object, long location, int messageCode, String layerPrefix,
-            String messageText, Object userData)
+    public boolean invoke(EnumSet<VkDebugReportFlagBitsEXT> flags,
+                          int objectType,
+                          long object,
+                          long location,
+                          int messageCode,
+                          String layerPrefix,
+                          String messageText,
+                          Object userData)
     {
-        
 //        log.error("My Java debug callback LayerPrefix:{} MessageText:{}", layerPrefix, messageText);
         log.error("Debug Callback:{}", messageText);
-        
-//        log.error("Flags zzzz {}", flags.toString());
-        
+
         // MUST return false;
         return false;
     }
