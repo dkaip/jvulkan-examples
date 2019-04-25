@@ -22,6 +22,10 @@
   </appenders>
  
   <loggers>
+    <logger name="jvulkan-natives" level="Trace" additivity="false">
+      <appender-ref ref="STDOUT"/>
+      <appender-ref ref="File"/>
+    </logger>
     <logger name="jvulkan-example" level="Trace" additivity="false">
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="File"/>

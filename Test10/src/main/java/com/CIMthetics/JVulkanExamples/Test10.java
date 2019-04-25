@@ -1061,7 +1061,7 @@ public class Test10
 
         /*
          * I'm not sure if this should be here in a normal situation...this seems
-         * to drag to world to a stop just to do this buffer copy.  I am thinking
+         * to drag the world to a stop just to do this buffer copy.  I am thinking
          * that in a "production" case you would use a fence or something to allow
          * this to be done asynchronously.
          */
@@ -2224,7 +2224,7 @@ public class Test10
         vulkanApplicationInfo.setApplicationVersion(0);
         vulkanApplicationInfo.setEngineName("No Engine");
         vulkanApplicationInfo.setEngineVersion(0);
-        vulkanApplicationInfo.setApiVersion(VK_MAKE_VERSION(1, 77, 0));
+        vulkanApplicationInfo.setApiVersion(VK_MAKE_VERSION(1, 101, 0));
         
         log.trace("Created the Vulkan application information.");
         
