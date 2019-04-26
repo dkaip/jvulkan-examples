@@ -1,6 +1,7 @@
 # jvulkan-examples
 
-**jvulkan-examples** is a collection of Java programs that demonstrate the use of the **jvulkan** Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the **Vulkan Tutorial** that can be found online (written in c++).  For more information refer to the [Vulkan Tutorial](https://vulkan-tutorial.com/).  
+**jvulkan-examples** is a collection of Java programs that demonstrate the use of the 
+[jvulkan](https://github.com/dkaip/jvulkan) Java Vulkan SDK project.  The program files are more or less all of the different examples explored in the **Vulkan Tutorial** that can be found online (written in c++).  For more information refer to the [Vulkan Tutorial](https://vulkan-tutorial.com/).  
 
 Do not expect this software to work if you do not have Vulkan drivers available on your 
 machine for your graphics card.  It has been running just fine on a Radeon RX460 with 4GB of RAM.
@@ -24,7 +25,7 @@ Also, at the current time the <code>WSI</code> method used is Wayland.
 You will need to have a local Maven repository.  I believe it will be created automatically at the first use of 
 any Maven(<code>mvn</code>) command.  
 
-Retrieve and build the <code>jvulkan-natives-Linux-x86_64</code> project.  Refer to its 
+Retrieve and build the [jvulkan-natives-Linux-x86_64](https://github.com/dkaip/jvulkan-natives-Linux-x86_64) project.  Refer to its 
 README file for information. 
 Once built, locate the result of the build, the file <code>libjvulkan-natives-Linux-x86_64.so</code>, 
 and <code>cd</code> to that directory.  Once in that directory execute the following maven command:  
@@ -34,8 +35,9 @@ and <code>cd</code> to that directory.  Once in that directory execute the follo
 This will install the <code>libjvulkan-natives-Linux-x86_64.so</code> artifact into the local Maven 
 repository so that the <code>gradle</code> build process will be able to access it.
 
-Retrieve and build the <code>jvulkan</code> project.  Refer to its 
-README file for information. Once built, locate the result of the build, the file <code>jvulkan.jar</code>, 
+Retrieve and build the [jvulkan](https://github.com/dkaip/jvulkan) project.  Refer to its 
+README file for information. Once built, locate the result of the build (most likely in 
+<code>jvulkan/build/libs</code>), the file <code>jvulkan.jar</code>, 
 and <code>cd</code> to that directory. Once in that directory execute the following maven command:
 
 <code>mvn install:install-file -Dfile=./jvulkan.jar -DgroupId="com.CIMthetics" -DartifactId=jvulkan -Dversion="0.0.1" -Dpackaging=jar</code>  
@@ -51,7 +53,7 @@ Hopefully before too long <code>jvulkan</code> and the native (<code>libjvulkan-
 ### Get the code for the examples
 Use the <code>git clone</code> command to get the code. 
 
-<code>git clone path-to-repository jvulkan-examples</code> 
+<code>git clone https://github.com/dkaip/jvulkan-examples jvulkan-examples</code> 
 
 This will create a <code>jvulkan-examples</code> directory in your current directory
 
