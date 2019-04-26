@@ -89,6 +89,10 @@ If, for some reason, the <code>Main class:</code> did not get filled in, in this
 With a run configuration created you should be able to run the example in either Debug or non-Debug modes 
 from inside the eclipse IDE.
 
+Note: <code>-Djvulkan.native.library.path</code> is required when running a program using 
+the **jvulkan** library.  Slf4j is required as well.  In this case I am having slf4j use 
+log4j2 hence the <code>-Dlog4j.configurationFile=</code> command line argument.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.  
 
