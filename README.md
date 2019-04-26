@@ -75,7 +75,7 @@ before you execute the <code>gradle run</code> command.
 I was able to use <code>git</code> to extract the code from the repository.  Once the code was in a 
 directory on my machine, in this case <code>./jvulkan-examples</code>, I executed the command 
 <code>gradle cleanEclipse eclipse</code>. Next, I started eclipse and performed an 
-"import an existing gradle project" into eclipse. It to loaded the project successfully.  
+"import an existing gradle project" into eclipse. It loaded the project successfully.  
 
 Once loaded, I was able to select a (sub)module, i.e. <code>Test6</code>, then I selected run configurations.
 I was able to create a new run configuration that had the proper dependencies already filled in.  Next, in 
