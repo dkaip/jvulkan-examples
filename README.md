@@ -95,7 +95,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please do not reformat the source code for the existing code.  If you make additions, go ahead and format 
 the source files as you like.
 
-Please make sure to update tests as appropriate.
-
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
