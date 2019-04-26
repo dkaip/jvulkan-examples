@@ -12,7 +12,7 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlRegistry;
 
 public class MyRegistryListener implements WlRegistryListener
 {
-    private Logger log = LoggerFactory.getLogger("HWJVI_Client");;
+    private Logger log = LoggerFactory.getLogger("jvulkan-example");;
     private ConcurrentHashMap<Integer,WaylandRegistryEntry> registryEntries = new ConcurrentHashMap<Integer,WaylandRegistryEntry>(40, 0.75F, 1);
     
     @Override

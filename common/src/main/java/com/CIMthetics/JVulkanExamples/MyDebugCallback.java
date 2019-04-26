@@ -10,7 +10,7 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsE
 
 public class MyDebugCallback implements VkDebugReportCallback
 {
-    private Logger log = LoggerFactory.getLogger("HWJVI_Client");;
+    private Logger log = LoggerFactory.getLogger("jvulkan-example");;
 
     @Override
     public boolean invoke(EnumSet<VkDebugReportFlagBitsEXT> flags,
