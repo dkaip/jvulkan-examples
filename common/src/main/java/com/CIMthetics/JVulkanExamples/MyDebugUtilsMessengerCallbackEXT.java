@@ -21,6 +21,16 @@ public class MyDebugUtilsMessengerCallbackEXT implements VkDebugUtilsMessengerCa
                           Object userData)
     {
         log.debug("DebugMessengerUtilsCallback");
+        log.debug("    Message Severity:{}", messageSeverity.toString());
+        log.debug("    MessageType:{}", messageType.toString());
+        log.debug("    CallbackData.messageIdName:{}", callbackData.getMessageIdName());
+        log.debug("    CallbackData.messageIdNumber:{}", callbackData.getMessageIdNumber());
+        log.debug("    CallbackData.message:{}", callbackData.getMessage());
+        log.debug("    CallbackData.queueLabels:{}", callbackData.getQueueLabels().toString());
+        log.debug("    CallbackData.cmdBufLabels:{}", callbackData.getCmdBufLabels().toString());
+        log.debug("    CallbackData.objects:{}", callbackData.getObjects().toString());
+        log.debug("    UserData:{}", userData == null ? "null" : "not null");
+        
         return false;
     }
 
