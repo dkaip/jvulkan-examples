@@ -96,7 +96,7 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueSubm
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueWaitIdle;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkResetFences;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkSetDebugUtilsObjectNameEXT;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkSetDebugUtilsObjectTagEXT;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkSubmitDebugUtilsMessageEXT;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUnmapMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
@@ -264,14 +264,15 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkColorSpaceKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageSeverityFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageTypeFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkSurfaceKHR;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsLabelEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsMessengerCallbackDataEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectNameInfoEXT;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectTagInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugUtilsMessengerCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkSurfaceKHR;
 import com.CIMthetics.jvulkan.Wayland.WaylandRegistryEntry;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlCompositor;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlDisplay;
@@ -2392,6 +2393,7 @@ public class Test10
                     VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT));
             
             debugUtilsMessengerCreateInfoEXT.setCallbackObject(myDebugUtilsMessengerCallback);
+            debugUtilsMessengerCreateInfoEXT.setUserData(new String("Barfy"));
             result = vkCreateDebugUtilsMessengerEXT(
                     vulkanInstance,
                     debugUtilsMessengerCreateInfoEXT,
@@ -2480,6 +2482,79 @@ public class Test10
         log.trace("Attemping to clean up Vulkan objects.");
         // Create and submit post present barrier
         
+//        /*
+//         * Test vkSubmitDebugUtilsMessageEXT
+//         */
+//        VkDebugUtilsLabelEXT qLabel;
+//        float[] color;
+//        Collection<VkDebugUtilsLabelEXT> qLabels = new LinkedList<VkDebugUtilsLabelEXT>();
+//        qLabel = new VkDebugUtilsLabelEXT();
+//        qLabel.setLabelName("QueueLabel1Name");
+//        color = new float[4];
+//        color[0] = 1.0f;
+//        color[1] = 1.0f;
+//        color[2] = 1.0f;
+//        color[3] = 1.0f;
+//        qLabel.setColor(color);
+//        qLabels.add(qLabel);
+//        qLabel = new VkDebugUtilsLabelEXT();
+//        qLabel.setLabelName("QueueLabel2Name");
+//        color = new float[4];
+//        color[0] = 0.75f;
+//        color[1] = 0.75f;
+//        color[2] = 0.75f;
+//        color[3] = 0.75f;
+//        qLabel.setColor(color);
+//        qLabels.add(qLabel);
+//        
+//        VkDebugUtilsLabelEXT cmdLabel;
+//        Collection<VkDebugUtilsLabelEXT> cmdLabels = new LinkedList<VkDebugUtilsLabelEXT>();
+//        cmdLabel = new VkDebugUtilsLabelEXT();
+//        cmdLabel.setLabelName("CmdBufLabel1Name");
+//        color = new float[4];
+//        color[0] = 0.5f;
+//        color[1] = 0.5f;
+//        color[2] = 0.5f;
+//        color[3] = 0.5f;
+//        cmdLabel.setColor(color);
+//        cmdLabels.add(cmdLabel);
+//        cmdLabel = new VkDebugUtilsLabelEXT();
+//        cmdLabel.setLabelName("CmdBufLabel2Name");
+//        color = new float[4];
+//        color[0] = 0.25f;
+//        color[1] = 0.25f;
+//        color[2] = 0.25f;
+//        color[3] = 0.25f;
+//        cmdLabel.setColor(color);
+//        cmdLabels.add(cmdLabel);
+//        
+//        VkDebugUtilsObjectNameInfoEXT objectNameInfo;
+//        Collection<VkDebugUtilsObjectNameInfoEXT> objectNameInfos = new LinkedList<VkDebugUtilsObjectNameInfoEXT>();
+//        objectNameInfo = new VkDebugUtilsObjectNameInfoEXT();
+//        objectNameInfo.setObjectType(VkObjectType.VK_OBJECT_TYPE_INSTANCE);
+//        objectNameInfo.setObjectHandle(new VulkanHandle());
+//        objectNameInfo.setObjectName("ObjectName1");
+//        objectNameInfos.add(objectNameInfo);
+//        objectNameInfo = new VkDebugUtilsObjectNameInfoEXT();
+//        objectNameInfo.setObjectType(VkObjectType.VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION);
+//        objectNameInfo.setObjectHandle(new VulkanHandle());
+//        objectNameInfo.setObjectName("ObjectName2");
+//        objectNameInfos.add(objectNameInfo);
+//        
+//        
+//        VkDebugUtilsMessengerCallbackDataEXT vkDebugUtilsMessengerCallbackDataEXT = new VkDebugUtilsMessengerCallbackDataEXT();
+//        vkDebugUtilsMessengerCallbackDataEXT.setMessageIdName("MessageIdName");
+//        vkDebugUtilsMessengerCallbackDataEXT.setMessageIdNumber(3141592);
+//        vkDebugUtilsMessengerCallbackDataEXT.setMessage("Message");
+//        vkDebugUtilsMessengerCallbackDataEXT.setQueueLabels(qLabels);
+//        vkDebugUtilsMessengerCallbackDataEXT.setCmdBufLabels(cmdLabels);
+//        vkDebugUtilsMessengerCallbackDataEXT.setObjects(objectNameInfos);
+//        
+//        vkSubmitDebugUtilsMessageEXT(vulkanInstance,
+//                VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
+//                EnumSet.of(VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT),
+//                vkDebugUtilsMessengerCallbackDataEXT);
+//        
         cleanupSwapchain(true);
         
         log.trace("Attempting to destroy the descriptor pool.");
