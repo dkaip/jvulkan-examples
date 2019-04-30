@@ -16,6 +16,7 @@
 package com.CIMthetics.JVulkanExamples;
 
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SURFACE_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
@@ -38,6 +39,7 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCmdEndRen
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateCommandPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDebugReportCallbackEXT;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDebugUtilsMessengerEXT;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDescriptorPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDescriptorSetLayout;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateDevice;
@@ -55,6 +57,7 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkCreateWay
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyCommandPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDebugReportCallbackEXT;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDebugUtilsMessengerEXT;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDescriptorPool;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDescriptorSetLayout;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkDestroyDevice;
@@ -92,6 +95,8 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueuePres
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueSubmit;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkQueueWaitIdle;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkResetFences;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkSetDebugUtilsObjectNameEXT;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkSetDebugUtilsObjectTagEXT;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUnmapMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
@@ -155,6 +160,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkInstanceCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkLogicOp;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkMemoryMapFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkMemoryPropertyFlagBits;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkObjectType;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkPipelineBindPoint;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkPipelineStageFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkPolygonMode;
@@ -171,6 +177,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.MappedMemoryPointer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkBuffer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkCommandBuffer;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkCommandPool;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDebugUtilsMessengerEXT;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorPool;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorSet;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkDescriptorSetLayout;
@@ -255,7 +262,12 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkSubmitInf
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkSwapchainCreateInfoKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkColorSpaceKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageSeverityFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageTypeFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectNameInfoEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectTagInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugUtilsMessengerCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
@@ -276,6 +288,8 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
  */
 public class Test10
 {
+    byte[] tagArray = {3, 1, 4, 1, 5, 9, 2};
+    
     private Logger log;
 
     private static final boolean validationDesired = Boolean.parseBoolean(System.getProperty("vulkan.validation", "false"));
@@ -317,7 +331,9 @@ public class Test10
     private Collection<String> vulkanGraphicsDeviceExtensionNames = new ArrayList<String>();
     private Collection<String> vulkanGraphicsenabledLayerNames = new ArrayList<String>();
 
-    private MyDebugCallback     myDebugCallback = new MyDebugCallback();
+    private MyDebugCallback                     myDebugCallback = new MyDebugCallback();
+    private MyDebugUtilsMessengerCallbackEXT    myDebugUtilsMessengerCallback = new MyDebugUtilsMessengerCallbackEXT();
+    private VkDebugUtilsMessengerEXT            debugUtilsMessengerHandle = new VkDebugUtilsMessengerEXT();
     @SuppressWarnings("unused")
     private MyRegistryListener  myWaylandRegistryListener = new MyRegistryListener();
     
@@ -624,7 +640,6 @@ public class Test10
         createVulkanInstance();
         
         pickPhysicalDevice();
-        log.debug("AAA");
         boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, waylandDisplay);
         log.debug("Wayland presentaion support is {}", supported);
         
@@ -1160,6 +1175,20 @@ public class Test10
             
             imageAvailableSemaphoreHandles.add(aSemaphore);
             
+            // Use new debugging features to name the graphics queue
+            VkDebugUtilsObjectNameInfoEXT vkDebugUtilsObjectNameInfoEXT = new VkDebugUtilsObjectNameInfoEXT();
+            vkDebugUtilsObjectNameInfoEXT.setObjectType(VkObjectType.VK_OBJECT_TYPE_SEMAPHORE);
+            vkDebugUtilsObjectNameInfoEXT.setObjectHandle(aSemaphore);
+            vkDebugUtilsObjectNameInfoEXT.setObjectName("imageAvailableSemaphore for frame " + i + ".");
+            
+//            log.debug("vkDebugUtilsObjectNameInfoEXT:{}", vkDebugUtilsObjectNameInfoEXT.toString());
+            result = vkSetDebugUtilsObjectNameEXT(vulkanLogicalDevice, vkDebugUtilsObjectNameInfoEXT);
+            if (result != VkResult.VK_SUCCESS)
+            {
+                throw new AssertionError(
+                        "Failed to name imageAvailableSemaphoreHandles: " + vkResultToString(result));
+            }
+            
             aSemaphore = new VkSemaphore();
             result = vkCreateSemaphore(vulkanLogicalDevice, semaphoreCreateInfo, null, aSemaphore);
             if (result != VkResult.VK_SUCCESS)
@@ -1169,6 +1198,29 @@ public class Test10
             
             renderFinishedSemaphoreHandles.add(aSemaphore);
             
+            vkDebugUtilsObjectNameInfoEXT = new VkDebugUtilsObjectNameInfoEXT();
+            vkDebugUtilsObjectNameInfoEXT.setObjectType(VkObjectType.VK_OBJECT_TYPE_SEMAPHORE);
+            vkDebugUtilsObjectNameInfoEXT.setObjectHandle(aSemaphore);
+            vkDebugUtilsObjectNameInfoEXT.setObjectName("renderFinishedSemaphore for frame " + i + ".");
+            result = vkSetDebugUtilsObjectNameEXT(vulkanLogicalDevice, vkDebugUtilsObjectNameInfoEXT);
+            if (result != VkResult.VK_SUCCESS)
+            {
+                throw new AssertionError(
+                        "Failed to name renderFinishedSemaphoreHandles: " + vkResultToString(result));
+            }
+// I am not seeing this work at the moment it is probably more useful when you need more than name information
+//            VkDebugUtilsObjectTagInfoEXT vkDebugUtilsObjectTagInfoEXT = new VkDebugUtilsObjectTagInfoEXT();
+//            vkDebugUtilsObjectTagInfoEXT.setObjectType(VkObjectType.VK_OBJECT_TYPE_SEMAPHORE);
+//            vkDebugUtilsObjectTagInfoEXT.setObjectHandle(aSemaphore);
+//            vkDebugUtilsObjectTagInfoEXT.setTagName(312159L);
+//            vkDebugUtilsObjectTagInfoEXT.setTag(tagArray);
+//            result = vkSetDebugUtilsObjectTagEXT(vulkanLogicalDevice, vkDebugUtilsObjectTagInfoEXT);
+//            if (result != VkResult.VK_SUCCESS)
+//            {
+//                throw new AssertionError(
+//                        "Failed to tag graphics queue: " + vkResultToString(result));
+//            }
+//            
             VkFence aFence = new VkFence();
             result = vkCreateFence(vulkanLogicalDevice, fenceCreateInfo, null, aFence);
             if (result != VkResult.VK_SUCCESS)
@@ -1949,6 +2001,33 @@ public class Test10
     {
         vulkanGraphicsCommandsQueue = new VkQueue();
         vkGetDeviceQueue(vulkanLogicalDevice, graphicsQueueFamilyIndex, 0, vulkanGraphicsCommandsQueue);
+        
+//        // Use new debugging features to name the graphics queue
+//        VkDebugUtilsObjectNameInfoEXT vkDebugUtilsObjectNameInfoEXT = new VkDebugUtilsObjectNameInfoEXT();
+//        vkDebugUtilsObjectNameInfoEXT.setObjectType(VkObjectType.VK_OBJECT_TYPE_QUEUE);
+//        vkDebugUtilsObjectNameInfoEXT.setObjectHandle(vulkanGraphicsCommandsQueue);
+//        vkDebugUtilsObjectNameInfoEXT.setObjectName("GraphicsQueue");
+//        
+////        log.debug("vkDebugUtilsObjectNameInfoEXT:{}", vkDebugUtilsObjectNameInfoEXT.toString());
+//        VkResult result = vkSetDebugUtilsObjectNameEXT(vulkanLogicalDevice, vkDebugUtilsObjectNameInfoEXT);
+//        if (result != VkResult.VK_SUCCESS)
+//        {
+//            throw new AssertionError(
+//                    "Failed to name graphics queue: " + vkResultToString(result));
+//        }
+//        
+//        VkDebugUtilsObjectTagInfoEXT vkDebugUtilsObjectTagInfoEXT = new VkDebugUtilsObjectTagInfoEXT();
+//        vkDebugUtilsObjectTagInfoEXT.setObjectType(VkObjectType.VK_OBJECT_TYPE_QUEUE);
+//        vkDebugUtilsObjectTagInfoEXT.setObjectHandle(vulkanGraphicsCommandsQueue);
+//        vkDebugUtilsObjectTagInfoEXT.setTagName(312159L);
+//        vkDebugUtilsObjectTagInfoEXT.setTag(tagArray);
+//        result = vkSetDebugUtilsObjectTagEXT(vulkanLogicalDevice, vkDebugUtilsObjectTagInfoEXT);
+//        if (result != VkResult.VK_SUCCESS)
+//        {
+//            throw new AssertionError(
+//                    "Failed to tag graphics queue: " + vkResultToString(result));
+//        }
+//        
         log.trace("Handle for Graphics command queue created. {} {}", vulkanLogicalDevice.toString(), vulkanGraphicsCommandsQueue.toString());
     }
     
@@ -2245,6 +2324,8 @@ public class Test10
         
         enabledExtensions.addAll(requiredExtensions);
         enabledExtensions.add(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        enabledExtensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        
         enabledExtensions.add(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
         
         // Setup the desired/required validation layers (as defined above)
@@ -2295,6 +2376,31 @@ public class Test10
             {
                 debugCallbackHandle = null;
                 throw new AssertionError("Failed to create vkCreateDebugReportCallbackEXT: " + vkResultToString(result));
+            }
+            
+            // Adding new style debugging
+            VkDebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfoEXT = new VkDebugUtilsMessengerCreateInfoEXT();
+            debugUtilsMessengerCreateInfoEXT.setMessageSeverity(EnumSet.of(
+//                    VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
+//                    VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
+                    VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
+                    VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT));
+            
+            debugUtilsMessengerCreateInfoEXT.setMessageType(EnumSet.of(
+                    VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
+                    VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+                    VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT));
+            
+            debugUtilsMessengerCreateInfoEXT.setCallbackObject(myDebugUtilsMessengerCallback);
+            result = vkCreateDebugUtilsMessengerEXT(
+                    vulkanInstance,
+                    debugUtilsMessengerCreateInfoEXT,
+                    (VkAllocationCallbacks)null,
+                    debugUtilsMessengerHandle);
+            if (result != VkResult.VK_SUCCESS)
+            {
+                debugCallbackHandle = null;
+                throw new AssertionError("Failed to create vkCreateDebugUtilsMessengerEXT: " + vkResultToString(result));
             }
             
             log.debug("Callback handle is {}.", String.format("%x", debugCallbackHandle.getHandle()));
@@ -2455,6 +2561,10 @@ public class Test10
         vkDestroyDebugReportCallbackEXT(vulkanInstance, debugCallbackHandle, null);
         log.trace("Destroyed debug callback.");
 
+        log.trace("Attemping to destroy debug utils callback.");
+        vkDestroyDebugUtilsMessengerEXT(vulkanInstance, debugUtilsMessengerHandle, null);
+        log.trace("Destroyed debug callback.");
+        
         log.trace("Destoying Vulkan Instance. {}");
         vkDestroyInstance(vulkanInstance, null);
         log.debug("Vulkan Instance destroyed.");
