@@ -7,8 +7,6 @@
  
   <appenders>
     <appender type="Console" name="STDOUT">
-      <layout type="PatternLayout" pattern="%d %m C:%X{Vehicle} %X%n"/>
-      <layout type="PatternLayout" pattern="%d %m MDC%X%n"/>
       <layout type="PatternLayout" pattern="%d %C{2}.%M %m %ex%n"/><!-- class & line number -->
     </appender>
     <appender type="Console" name="FLOW">
@@ -23,6 +21,10 @@
  
   <loggers>
     <logger name="jvulkan-natives" level="Trace" additivity="false">
+      <appender-ref ref="STDOUT"/>
+      <appender-ref ref="File"/>
+    </logger>
+    <logger name="jvulkan" level="Trace" additivity="false">
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="File"/>
     </logger>
