@@ -216,7 +216,9 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageSubresourceRange
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkMemoryRequirements;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkMemoryType;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkOffset2D;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDevice16BitStorageFeatures;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDeviceFeatures;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDeviceFeatures2;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDeviceIDProperties;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDeviceMaintenance3Properties;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkPhysicalDeviceMemoryProperties;
@@ -246,6 +248,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescripto
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescriptorSetAllocateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDescriptorSetLayoutCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDeviceCreateInfo;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDeviceGroupDeviceCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkDeviceQueueCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkFenceCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkFramebufferCreateInfo;
@@ -272,23 +275,44 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkColorSpaceKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageSeverityFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageTypeFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkMemoryOverallocationBehaviorAMD;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkValidationFeatureEnableEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkSurfaceKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsLabelEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsMessengerCallbackDataEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectNameInfoEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDeviceMemoryOverallocationCreateInfoAMD;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDevice8BitStorageFeaturesKHR;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceASTCDecodeFeaturesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceBufferDeviceAddressFeaturesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceComputeShaderDerivativesFeaturesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceConditionalRenderingFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceConservativeRasterizationPropertiesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceCooperativeMatrixFeaturesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceCooperativeMatrixPropertiesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceCornerSampledImageFeaturesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDepthClipEnableFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDepthStencilResolvePropertiesKHR;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDescriptorIndexingFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDescriptorIndexingPropertiesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDiscardRectanglePropertiesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceDriverPropertiesKHR;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceExclusiveScissorFeaturesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceExternalMemoryHostPropertiesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceFloat16Int8FeaturesKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceFloatControlsPropertiesKHR;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceFragmentDensityMapFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceFragmentDensityMapPropertiesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceHostQueryResetFeaturesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceInlineUniformBlockFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceInlineUniformBlockPropertiesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceMemoryPriorityFeaturesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceMeshShaderFeaturesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceMeshShaderPropertiesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDevicePCIBusInfoPropertiesEXT;
@@ -314,7 +338,8 @@ import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurface;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
 
 /**
- * This is the vulkan tutorial on Uniform Buffers.
+ * This started as a copy of Test5.  It has been modified and is used in testing
+ * some of the newly implemented functions and features in jvulkan.
  * 
  * @author Douglas Kaip
  *
@@ -2108,6 +2133,100 @@ public class Test10
         float[] queuePriorities = new float[1];
         queuePriorities[0] = 1.0f;
         
+        Collection<VkPhysicalDevice> pdCollection = new LinkedList<VkPhysicalDevice>();
+        pdCollection.add(vulkanPhysicalDevice);
+        VkDeviceGroupDeviceCreateInfo vkDeviceGroupDeviceCreateInfo = new VkDeviceGroupDeviceCreateInfo();
+        vkDeviceGroupDeviceCreateInfo.setPhysicalDevices(pdCollection);
+        
+        VkDeviceMemoryOverallocationCreateInfoAMD vkDeviceMemoryOverallocationCreateInfoAMD = new VkDeviceMemoryOverallocationCreateInfoAMD();
+        vkDeviceMemoryOverallocationCreateInfoAMD.setOverallocationBehavior(VkMemoryOverallocationBehaviorAMD.VK_MEMORY_OVERALLOCATION_BEHAVIOR_DISALLOWED_AMD);
+        vkDeviceMemoryOverallocationCreateInfoAMD.setpNext(vkDeviceGroupDeviceCreateInfo);
+        
+        VkPhysicalDevice16BitStorageFeatures vkPhysicalDevice16BitStorageFeatures = new VkPhysicalDevice16BitStorageFeatures();
+        vkPhysicalDevice16BitStorageFeatures.setStorageBuffer16BitAccess(true);
+        vkPhysicalDevice16BitStorageFeatures.setUniformAndStorageBuffer16BitAccess(true);
+        vkPhysicalDevice16BitStorageFeatures.setStoragePushConstant16(true);
+        vkPhysicalDevice16BitStorageFeatures.setStorageInputOutput16(true);
+        vkPhysicalDevice16BitStorageFeatures.setpNext(vkDeviceMemoryOverallocationCreateInfoAMD);
+        
+        VkPhysicalDevice8BitStorageFeaturesKHR vkPhysicalDevice8BitStorageFeaturesKHR = new VkPhysicalDevice8BitStorageFeaturesKHR();
+        vkPhysicalDevice8BitStorageFeaturesKHR.setStorageBuffer8BitAccess(true);
+        vkPhysicalDevice8BitStorageFeaturesKHR.setUniformAndStorageBuffer8BitAccess(true);
+        vkPhysicalDevice8BitStorageFeaturesKHR.setStoragePushConstant8(true);
+        vkPhysicalDevice8BitStorageFeaturesKHR.setpNext(vkPhysicalDevice16BitStorageFeatures);
+        
+        VkPhysicalDeviceASTCDecodeFeaturesEXT vkPhysicalDeviceASTCDecodeFeaturesEXT = new VkPhysicalDeviceASTCDecodeFeaturesEXT();
+        vkPhysicalDeviceASTCDecodeFeaturesEXT.setDecodeModeSharedExponent(true);
+        vkPhysicalDeviceASTCDecodeFeaturesEXT.setpNext(vkPhysicalDevice8BitStorageFeaturesKHR);
+        
+        VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT vkPhysicalDeviceBlendOperationAdvancedFeaturesEXT = new VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT();
+        vkPhysicalDeviceBlendOperationAdvancedFeaturesEXT.setAdvancedBlendCoherentOperations(true);
+        vkPhysicalDeviceBlendOperationAdvancedFeaturesEXT.setpNext(vkPhysicalDeviceASTCDecodeFeaturesEXT);
+        
+        VkPhysicalDeviceBufferDeviceAddressFeaturesEXT vkPhysicalDeviceBufferDeviceAddressFeaturesEXT = new VkPhysicalDeviceBufferDeviceAddressFeaturesEXT();
+        vkPhysicalDeviceBufferDeviceAddressFeaturesEXT.setBufferDeviceAddress(true);
+        vkPhysicalDeviceBufferDeviceAddressFeaturesEXT.setBufferDeviceAddressCaptureReplay(true);
+        vkPhysicalDeviceBufferDeviceAddressFeaturesEXT.setBufferDeviceAddressMultiDevice(true);
+        vkPhysicalDeviceBufferDeviceAddressFeaturesEXT.setpNext(vkPhysicalDeviceBlendOperationAdvancedFeaturesEXT);
+        
+        VkPhysicalDeviceComputeShaderDerivativesFeaturesNV vkPhysicalDeviceComputeShaderDerivativesFeaturesNV = new VkPhysicalDeviceComputeShaderDerivativesFeaturesNV();
+        vkPhysicalDeviceComputeShaderDerivativesFeaturesNV.setComputeDerivativeGroupQuads(true);
+        vkPhysicalDeviceComputeShaderDerivativesFeaturesNV.setComputeDerivativeGroupLinear(true);
+        vkPhysicalDeviceComputeShaderDerivativesFeaturesNV.setpNext(vkPhysicalDeviceBufferDeviceAddressFeaturesEXT);
+        
+        VkPhysicalDeviceConditionalRenderingFeaturesEXT vkPhysicalDeviceConditionalRenderingFeaturesEXT = new VkPhysicalDeviceConditionalRenderingFeaturesEXT();
+        vkPhysicalDeviceConditionalRenderingFeaturesEXT.setConditionalRendering(true);
+        vkPhysicalDeviceConditionalRenderingFeaturesEXT.setInheritedConditionalRendering(true);
+        vkPhysicalDeviceConditionalRenderingFeaturesEXT.setpNext(vkPhysicalDeviceComputeShaderDerivativesFeaturesNV);
+        
+        VkPhysicalDeviceCooperativeMatrixFeaturesNV vkPhysicalDeviceCooperativeMatrixFeaturesNV = new VkPhysicalDeviceCooperativeMatrixFeaturesNV();
+        vkPhysicalDeviceCooperativeMatrixFeaturesNV.setCooperativeMatrix(true);
+        vkPhysicalDeviceCooperativeMatrixFeaturesNV.setCooperativeMatrixRobustBufferAccess(true);
+        vkPhysicalDeviceCooperativeMatrixFeaturesNV.setpNext(vkPhysicalDeviceConditionalRenderingFeaturesEXT);
+        
+        VkPhysicalDeviceCornerSampledImageFeaturesNV vkPhysicalDeviceCornerSampledImageFeaturesNV = new VkPhysicalDeviceCornerSampledImageFeaturesNV();
+        vkPhysicalDeviceCornerSampledImageFeaturesNV.setCornerSampledImage(true);
+        vkPhysicalDeviceCornerSampledImageFeaturesNV.setpNext(vkPhysicalDeviceCooperativeMatrixFeaturesNV);
+        
+        VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV vkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV = new VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV();
+        vkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV.setDedicatedAllocationImageAliasing(true);
+        vkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV.setpNext(vkPhysicalDeviceCornerSampledImageFeaturesNV);
+        
+        VkPhysicalDeviceDepthClipEnableFeaturesEXT vkPhysicalDeviceDepthClipEnableFeaturesEXT = new VkPhysicalDeviceDepthClipEnableFeaturesEXT();
+        vkPhysicalDeviceDepthClipEnableFeaturesEXT.setDepthClipEnable(true);
+        vkPhysicalDeviceDepthClipEnableFeaturesEXT.setpNext(vkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV);
+        
+        VkPhysicalDeviceDescriptorIndexingFeaturesEXT vkPhysicalDeviceDescriptorIndexingFeaturesEXT = new VkPhysicalDeviceDescriptorIndexingFeaturesEXT();
+        vkPhysicalDeviceDescriptorIndexingFeaturesEXT.setpNext(vkPhysicalDeviceDepthClipEnableFeaturesEXT);
+        
+        VkPhysicalDeviceExclusiveScissorFeaturesNV vkPhysicalDeviceExclusiveScissorFeaturesNV = new VkPhysicalDeviceExclusiveScissorFeaturesNV();
+        vkPhysicalDeviceExclusiveScissorFeaturesNV.setpNext(vkPhysicalDeviceDescriptorIndexingFeaturesEXT);
+        
+        VkPhysicalDeviceFeatures2 vkPhysicalDeviceFeatures2 = new VkPhysicalDeviceFeatures2();
+        vkPhysicalDeviceFeatures2.setFeatures(chosenPhysicalDeviceFeatures);
+        vkPhysicalDeviceFeatures2.setpNext(vkPhysicalDeviceExclusiveScissorFeaturesNV);
+        
+        VkPhysicalDeviceFloat16Int8FeaturesKHR vkPhysicalDeviceFloat16Int8FeaturesKHR = new VkPhysicalDeviceFloat16Int8FeaturesKHR();
+        vkPhysicalDeviceFloat16Int8FeaturesKHR.setpNext(vkPhysicalDeviceFeatures2);
+        
+        VkPhysicalDeviceFragmentDensityMapFeaturesEXT vkPhysicalDeviceFragmentDensityMapFeaturesEXT = new VkPhysicalDeviceFragmentDensityMapFeaturesEXT();
+        vkPhysicalDeviceFragmentDensityMapFeaturesEXT.setpNext(vkPhysicalDeviceFloat16Int8FeaturesKHR);
+        
+        VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV vkPhysicalDeviceFragmentShaderBarycentricFeaturesNV = new VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV();
+        vkPhysicalDeviceFragmentShaderBarycentricFeaturesNV.setpNext(vkPhysicalDeviceFragmentDensityMapFeaturesEXT);
+        
+        VkPhysicalDeviceHostQueryResetFeaturesEXT vkPhysicalDeviceHostQueryResetFeaturesEXT = new VkPhysicalDeviceHostQueryResetFeaturesEXT();
+        vkPhysicalDeviceHostQueryResetFeaturesEXT.setpNext(vkPhysicalDeviceFragmentShaderBarycentricFeaturesNV);
+        
+        VkPhysicalDeviceInlineUniformBlockFeaturesEXT vkPhysicalDeviceInlineUniformBlockFeaturesEXT = new VkPhysicalDeviceInlineUniformBlockFeaturesEXT();
+        vkPhysicalDeviceInlineUniformBlockFeaturesEXT.setpNext(vkPhysicalDeviceHostQueryResetFeaturesEXT);
+        
+        VkPhysicalDeviceMemoryPriorityFeaturesEXT vkPhysicalDeviceMemoryPriorityFeaturesEXT = new VkPhysicalDeviceMemoryPriorityFeaturesEXT();
+        vkPhysicalDeviceMemoryPriorityFeaturesEXT.setpNext(vkPhysicalDeviceInlineUniformBlockFeaturesEXT);
+        
+        VkPhysicalDeviceMeshShaderFeaturesNV vkPhysicalDeviceMeshShaderFeaturesNV = new VkPhysicalDeviceMeshShaderFeaturesNV();
+        vkPhysicalDeviceMeshShaderFeaturesNV.setpNext(vkPhysicalDeviceMemoryPriorityFeaturesEXT);
+        
         VkDeviceQueueCreateInfo vkDeviceQueueCreateInfo = new VkDeviceQueueCreateInfo();
         vkDeviceQueueCreateInfo.setQueueFamilyIndex(graphicsQueueFamilyIndex);
         vkDeviceQueueCreateInfo.setQueueCount(1);
@@ -2118,8 +2237,11 @@ public class Test10
 
         VkDeviceCreateInfo vkDeviceCreateInfo = new VkDeviceCreateInfo();
         vkDeviceCreateInfo.setQueueCreateInfos(vkDeviceQueueCreateInfos);
-        vkDeviceCreateInfo.setEnabledFeatures(chosenPhysicalDeviceFeatures);
+//        vkDeviceCreateInfo.setEnabledFeatures(chosenPhysicalDeviceFeatures);
+        vkDeviceCreateInfo.setEnabledFeatures(null); // This was moved up to vkPhysicalDeviceFeatures2
         vkDeviceCreateInfo.setEnabledExtensionNames(vulkanGraphicsDeviceExtensionNames);
+        
+        vkDeviceCreateInfo.setpNext(vkPhysicalDeviceMeshShaderFeaturesNV);
 
         VkDevice logicalDevice = new VkDevice();
         
