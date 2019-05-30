@@ -86,6 +86,7 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysic
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceProperties2;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceQueueFamilyProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceSurfaceCapabilities2KHR;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceSurfaceFormatsKHR;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceSurfacePresentModesKHR;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceSurfaceSupportKHR;
@@ -282,6 +283,7 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsE
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageSeverityFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugUtilsMessageTypeFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkMemoryOverallocationBehaviorAMD;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkPipelineCreationFeedbackFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkValidationFeatureEnableEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkSurfaceKHR;
@@ -289,6 +291,7 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsLabel
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsMessengerCallbackDataEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDebugUtilsObjectNameInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDeviceMemoryOverallocationCreateInfoAMD;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkDisplayNativeHdrSurfaceCapabilitiesAMD;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDevice8BitStorageFeaturesKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceASTCDecodeFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT;
@@ -333,14 +336,18 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceS
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceShaderImageFootprintFeaturesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceShadingRateImageFeaturesNV;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceShadingRateImagePropertiesNV;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceSurfaceInfo2KHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceTransformFeedbackFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceTransformFeedbackPropertiesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceYcbcrImageArraysFeaturesEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPipelineCreationFeedbackEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkSurfaceCapabilities2KHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkValidationFeaturesEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugUtilsMessengerCreateInfoEXT;
+import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineCreationFeedbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
 import com.CIMthetics.jvulkan.Wayland.WaylandRegistryEntry;
@@ -1605,6 +1612,27 @@ public class Test10
             throw new AssertionError("Failed to create pipeline layout: " + vkResultToString(result));
         }
 
+        VkPipelineCreationFeedbackEXT temp = null;
+        Collection<VkPipelineCreationFeedbackEXT> pipelineStageCreationFeedbacksCollection = new LinkedList<VkPipelineCreationFeedbackEXT>();
+        for(int i = 0; i < shaderStageCreationInfoCollection.size(); i++)
+        {
+            log.debug("Adding VkPipelineCreationFeedbackEXT");
+            temp = new VkPipelineCreationFeedbackEXT();
+            temp.setFlags(EnumSet.of(
+                    VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_VALID_BIT_EXT,
+                    VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_APPLICATION_PIPELINE_CACHE_HIT_BIT_EXT,
+                    VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_BASE_PIPELINE_ACCELERATION_BIT_EXT));
+            pipelineStageCreationFeedbacksCollection.add(temp);
+        }
+        VkPipelineCreationFeedbackCreateInfoEXT vkPipelineCreationFeedbackCreateInfoEXT = new VkPipelineCreationFeedbackCreateInfoEXT();
+        temp = new VkPipelineCreationFeedbackEXT();
+        temp.setFlags(EnumSet.of(
+                VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_VALID_BIT_EXT,
+                VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_APPLICATION_PIPELINE_CACHE_HIT_BIT_EXT,
+                VkPipelineCreationFeedbackFlagBitsEXT.VK_PIPELINE_CREATION_FEEDBACK_BASE_PIPELINE_ACCELERATION_BIT_EXT));
+        vkPipelineCreationFeedbackCreateInfoEXT.setPipelineCreationFeedback(temp);
+        vkPipelineCreationFeedbackCreateInfoEXT.setPipelineStageCreationFeedbacks(pipelineStageCreationFeedbacksCollection);
+        
         VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo  = new VkGraphicsPipelineCreateInfo();
         graphicsPipelineCreateInfo.setStages(shaderStageCreationInfoCollection);
         graphicsPipelineCreateInfo.setVertexInputState(vertexInputStateCreateInfo);
@@ -1616,6 +1644,8 @@ public class Test10
         graphicsPipelineCreateInfo.setLayout(vulkanPipelineLayoutHandle);
         graphicsPipelineCreateInfo.setRenderPass(vulkanRenderPassHandle);
         graphicsPipelineCreateInfo.setSubpass(0);
+        
+        graphicsPipelineCreateInfo.setpNext(vkPipelineCreationFeedbackCreateInfoEXT);
         
         Collection<VkGraphicsPipelineCreateInfo> graphicsPipelineCreateInfoCollection = new LinkedList<VkGraphicsPipelineCreateInfo>();
         graphicsPipelineCreateInfoCollection.add(graphicsPipelineCreateInfo);
@@ -1955,6 +1985,36 @@ public class Test10
             log.error("Call to vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed. Return code is:{}.", result);
             return;
         }
+        
+        /*
+         * There seems to be a problem in the native code calling vkGetPhysicalDeviceSurfaceCapabilities2KHR.
+         * I have spent quite a bit of time looking into the issue and at this point I cannot determine
+         * what the problem is so I am just going to move on for the moment.
+         */
+//        VkSurfaceCapabilities2KHR surfaceCapabilities2 = new VkSurfaceCapabilities2KHR();
+//        surfaceCapabilities2.setSurfaceCapabilities(surfaceCapabilities);
+//        log.debug(surfaceCapabilities.toString());
+//        VkPhysicalDeviceSurfaceInfo2KHR vkPhysicalDeviceSurfaceInfo2KHR = new VkPhysicalDeviceSurfaceInfo2KHR();
+//        vkPhysicalDeviceSurfaceInfo2KHR.setSurface(vulkanSurface);
+//        log.debug("pdh is:{}", vulkanPhysicalDevice);
+//        log.debug("surface is:{}", vulkanSurface);
+//        
+//        VkDisplayNativeHdrSurfaceCapabilitiesAMD vkDisplayNativeHdrSurfaceCapabilitiesAMD = new VkDisplayNativeHdrSurfaceCapabilitiesAMD();
+//
+////        surfaceCapabilities2.setpNext(vkDisplayNativeHdrSurfaceCapabilitiesAMD);
+//        
+////        VkResult result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(vulkanPhysicalDevice,
+//        result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(vulkanPhysicalDevice,
+//                vkPhysicalDeviceSurfaceInfo2KHR,
+//                surfaceCapabilities2);
+//        if (result != VkResult.VK_SUCCESS)
+//        {
+//            log.error("Call to vkGetPhysicalDeviceSurfaceCapabilities2KHR failed. Return code is:{}.", result);
+//            return;
+//        }
+//        
+//        surfaceCapabilities = surfaceCapabilities2.getSurfaceCapabilities();;
+//        log.debug(surfaceCapabilities.toString());
         
         List<VkSurfaceFormatKHR> surfaceFormats = new LinkedList<VkSurfaceFormatKHR>();
         result = vkGetPhysicalDeviceSurfaceFormatsKHR(vulkanPhysicalDevice, vulkanSurface, surfaceFormats); 
@@ -3009,7 +3069,7 @@ public class Test10
             /*
              * This is here to slow the frame rate down a little.
              */
-            Thread.sleep(100);
+            Thread.sleep(15);
         }
         catch (InterruptedException e)
         {
@@ -3200,7 +3260,7 @@ public class Test10
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f);
         uniformBufferObject.projection = new Matrix4f()
-                .perspective((float)Math.toRadians(45.0f),
+                .perspective((float)Math.toRadians(25.0f),
                         swapchainExtentUsed.getWidth() / 
                         (float)swapchainExtentUsed.getHeight(), 0.1f, 10.0f);
         
