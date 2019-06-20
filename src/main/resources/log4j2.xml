@@ -32,7 +32,7 @@
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="File"/>
     </logger>
-    <root level="WARN">
+    <root level="DEBUG">
       <appender-ref ref="FLOW"/>
     </root>
   </loggers>

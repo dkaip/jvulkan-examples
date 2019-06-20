@@ -106,15 +106,12 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUnmapMemo
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlCompositorCreateSurface;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlConnectDisplay;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlDisconnectDisplay;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlDisplayDispatch;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlDisplayGetRegistry;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRegistryAddListener;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRegistryBind;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRoundTrip;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellGetShellSurface;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellSetTopLevel;
+//import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellSetTopLevel;
 import static com.CIMthetics.jvulkan.VulkanCore.VKUtil.vkResultToString;
 
 import java.io.IOException;
@@ -294,13 +291,20 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceI
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
-import com.CIMthetics.jvulkan.Wayland.WaylandRegistryEntry;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlCompositor;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlDisplay;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlRegistry;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlShell;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurface;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlSurface;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlCompositorHandle;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlDisplayHandle;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlRegistryHandle;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlShellHandle;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurfaceHandle;
+import com.CIMthetics.jvulkan.Wayland.Handles.WlSurfaceHandle;
+import com.CIMthetics.jvulkan.Wayland.Objects.WaylandGlobalRegistryEntry;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlCompositor;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlDisplaySingleton;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlOutput;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlRegistry;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlShell;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlShellSurface;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
 
 /**
  * This is the vulkan tutorial on Texture mapping.  This started out as Test6.
@@ -315,14 +319,15 @@ public class Test11
     private static final boolean validationDesired = Boolean.parseBoolean(System.getProperty("vulkan.validation", "false"));
 
     // Wayland items
-    private WlDisplay           waylandDisplay;
+    private WlDisplaySingleton  waylandDisplay;
     private WlRegistry          waylandRegistry;
-    private WlCompositor        waylandCompositorInterface;
-    private WlShell             waylandShellInterface;
+    private WlCompositor        waylandCompositor;
+    private WlShell             waylandShell;
     private WlSurface           waylandSurface;
     private WlShellSurface      waylandShellSurface;
+    private WlOutput            wlOutputs[] = null;
     
-    private MyRegistryListener  myRegistryListener = new MyRegistryListener();
+//    private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
     private int     windowWidth     = 1024;
     private int     windowHeight    = 768;
@@ -353,7 +358,7 @@ public class Test11
 
     private MyDebugCallback     myDebugCallback = new MyDebugCallback();
     @SuppressWarnings("unused")
-    private MyRegistryListener  myWaylandRegistryListener = new MyRegistryListener();
+//    private MyRegistryListener  myWaylandRegistryListener = new MyRegistryListener();
     
     private volatile VkSwapchainKHR vulkanSwapchainHandle;
     private VkRenderPass            vulkanRenderPassHandle;
@@ -578,22 +583,98 @@ public class Test11
     
     private void initWaylandWindow()
     {
-        log.debug("Connecting to wayland display.");
-        waylandDisplay = wlConnectDisplay(null);
-        log.debug("Wayland display handle {}", waylandDisplay.toString());
+        waylandDisplay = WlDisplaySingleton.getInstance();
+        waylandDisplay.connect(null);
         
-        waylandRegistry = wlDisplayGetRegistry(waylandDisplay);
-        log.debug("Wayland registry = {}", waylandRegistry.toString());
+        waylandRegistry = waylandDisplay.getRegistry();
         
-        log.trace("Adding Registry listener");
-        wlRegistryAddListener(waylandRegistry, myRegistryListener, null);
+//        log.debug("Wayland display:{}", waylandDisplayS.getHandle().toString());
+        waylandDisplay.sync();
         
-        log.trace("Dispatching");
-        wlDisplayDispatch(waylandDisplay);
-        log.trace("Waiting for round trip");
-        wlRoundTrip(waylandDisplay);
+//      log.trace("Dispatching");
+//      wlDisplayDispatch((WlDisplayHandle)waylandDisplayS.getHandle());
+//      log.trace("Waiting for round trip");
+//      wlRoundTrip((WlDisplayHandle)waylandDisplayS.getHandle());
+      
+//        log.debug("Connecting to wayland display.");
+//        waylandDisplay = wlConnectDisplay(null);
+//        log.debug("Wayland display handle {}", waylandDisplay.toString());
+//        
+//        waylandRegistry = wlDisplayGetRegistry(waylandDisplay);
+//        log.debug("Wayland registry = {}", waylandRegistry.toString());
+//        
+//        log.trace("Adding Registry listener");
+//        wlRegistryAddListener(waylandRegistry, myRegistryListener, null);
+//        
+//        log.trace("Dispatching");
+//        wlDisplayDispatch(waylandDisplay);
+//        log.trace("Waiting for round trip");
+//        wlRoundTrip(waylandDisplay);
+//        
+//        LinkedList<WaylandGlobalRegistryEntry> registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
+//        if (registryEntries.size() != 1)
+//        {
+//            if (registryEntries.size() == 0)
+//            {
+//                log.error("Did not find the wl_compositor_interface in the registry.");
+//                System.exit(-1);
+//            }
+//            else if (registryEntries.size() > 1)
+//            {
+//                log.error("There was more than one wl_compositor_interface in the registry.");
+//                System.exit(-1);
+//            }
+//        }
+//        WaylandGlobalRegistryEntry compositorInterfaceEntry = registryEntries.get(0);
+//
+//        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_shell");
+//        if (registryEntries.size() != 1)
+//        {
+//            // Houston we have a problem
+//            if (registryEntries.size() == 0)
+//            {
+//                log.error("Did not find the wl_shell_interface in the registry.");
+//                System.exit(-1);
+//            }
+//            else if (registryEntries.size() > 1)
+//            {
+//                log.error("There was more than one wl_shell_interface in the registry.");
+//                System.exit(-1);
+//            }
+//        }
+//        WaylandGlobalRegistryEntry shellInterfaceEntry = registryEntries.get(0);
         
-        LinkedList<WaylandRegistryEntry> registryEntries = myRegistryListener.getRegistryEntriesFor("wl_compositor");
+        /*
+         * We need a slight delay so that the registry may be populated.  It is
+         * done asynchronously so if you just "rip" through the code you can get
+         * to here and find that entries that are supposed to be in the registry
+         * are not there yet.
+         */
+        try
+        {
+            Thread.sleep(1500);
+        }
+        catch (InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        LinkedList<WaylandGlobalRegistryEntry> registryEntries = waylandRegistry.getRegistryEntriesFor("wl_output");
+        wlOutputs = new WlOutput[registryEntries.size()];
+        log.debug("Number of outputs is {}.", registryEntries.size());
+        int i = 0;
+        for(WaylandGlobalRegistryEntry entry : registryEntries)
+        {
+            log.debug("Binding output {}", i);
+            wlOutputs[i] = (WlOutput)waylandRegistry.bind(entry);
+            i++;
+        }
+
+        waylandDisplay.sync();
+        waylandDisplay.dispatchDelayedEvents();
+        
+        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
         if (registryEntries.size() != 1)
         {
             if (registryEntries.size() == 0)
@@ -607,8 +688,16 @@ public class Test11
                 System.exit(-1);
             }
         }
-        WaylandRegistryEntry compositorInterfaceEntry = registryEntries.get(0);
-        registryEntries = myRegistryListener.getRegistryEntriesFor("wl_shell");
+        WaylandGlobalRegistryEntry compositorInterfaceEntry = registryEntries.get(0);
+        /*
+         * Note:
+         * If we need a different interface version than is in the global
+         * registry object list we will need to create the WaylandGlobalRegistryEntry
+         * manually and specify the required verion.
+         */
+        waylandCompositor = (WlCompositor) waylandRegistry.bind(compositorInterfaceEntry);
+        
+        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_shell");
         if (registryEntries.size() != 1)
         {
             // Houston we have a problem
@@ -623,33 +712,50 @@ public class Test11
                 System.exit(-1);
             }
         }
-        WaylandRegistryEntry shellInterfaceEntry = registryEntries.get(0);
-        log.trace("binding compositor");
-        VulkanHandle vulkanHandle;
-        vulkanHandle = wlRegistryBind(
-                waylandRegistry,
-                compositorInterfaceEntry.getRegistryId(),
-                compositorInterfaceEntry.getObjectName() + "_interface", // This is so ugly
-                compositorInterfaceEntry.getObjectVersion());
+        WaylandGlobalRegistryEntry shellInterfaceEntry = registryEntries.get(0);
+
+        waylandShell = (WlShell)waylandRegistry.bind(shellInterfaceEntry);
+
+        waylandSurface = waylandCompositor.createSurface();
+        log.debug("Wayland surface {}", waylandSurface.toString());
+        waylandShellSurface = waylandShell.getShellSurface(waylandSurface);
+        waylandShellSurface.setTopLevel();
         
-        waylandCompositorInterface = new WlCompositor(vulkanHandle);
+        waylandDisplay.sync();
+        waylandDisplay.dispatchDelayedEvents();
+
+        for(i = 0; i < registryEntries.size(); i++)
+        {
+            log.debug("WlOutput [{}] {}", i, wlOutputs[i].toString());
+            i++;
+        }
         
-        log.trace("binding shell");
-        vulkanHandle = wlRegistryBind(
-                waylandRegistry,
-                shellInterfaceEntry.getRegistryId(),
-                shellInterfaceEntry.getObjectName() + "_interface", // This is so ugly
-                shellInterfaceEntry.getObjectVersion());
-        
-        waylandShellInterface = new WlShell(vulkanHandle);
-        
-        waylandSurface = wlCompositorCreateSurface(waylandCompositorInterface);
-        log.trace("Surface Created");
-        
-        waylandShellSurface = wlShellGetShellSurface(waylandShellInterface, waylandSurface);
-        log.debug("Shell surface created {}", waylandShellSurface.toString());
-        
-        wlShellSetTopLevel(waylandShellSurface);
+//        log.trace("binding compositor");
+//        VulkanHandle vulkanHandle;
+//        vulkanHandle = wlRegistryBind(
+//                waylandRegistry,
+//                compositorInterfaceEntry.getRegistryId(),
+//                compositorInterfaceEntry.getObjectName() + "_interface", // This is so ugly
+//                compositorInterfaceEntry.getObjectVersion());
+//        
+//        waylandCompositorInterface = new WlCompositor(vulkanHandle);
+//        
+//        log.trace("binding shell");
+//        vulkanHandle = wlRegistryBind(
+//                waylandRegistry,
+//                shellInterfaceEntry.getRegistryId(),
+//                shellInterfaceEntry.getObjectName() + "_interface", // This is so ugly
+//                shellInterfaceEntry.getObjectVersion());
+//        
+//        waylandShellInterface = new WlShell(vulkanHandle);
+//        
+//        waylandSurface = wlCompositorCreateSurface(waylandCompositorInterface);
+//        log.trace("Surface Created");
+//        
+//        waylandShellSurface = wlShellGetShellSurface(waylandShellInterface, waylandSurface);
+//        log.debug("Shell surface created {}", waylandShellSurface.toString());
+//        
+//        wlShellSurfaceSetTopLevel(waylandShellSurface);
         
 //        log.trace("Dispatching");
 //        wlDisplayDispatch(waylandDisplay);
@@ -660,7 +766,7 @@ public class Test11
     private void cleanupWaylandWindow()
     {
         log.debug("Disconnecting from wayland display.");
-        wlDisconnectDisplay(waylandDisplay);
+//        wlDisplayDisconnect(waylandDisplay);
     }
     
     private void initVulkan()
@@ -672,8 +778,8 @@ public class Test11
         
         pickPhysicalDevice();
         
-        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, waylandDisplay);
-        log.debug("Wayland presentaion support is {}", supported);
+//        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, waylandDisplay);
+//        log.debug("Wayland presentaion support is {}", supported);
         
         /*
          * If this is successful graphicsQueueFamiliyIndex should be set with
@@ -1117,6 +1223,7 @@ public class Test11
         
         VkImageFormatProperties2 vkImageFormatProperties2 = new VkImageFormatProperties2();
         VkFilterCubicImageViewImageFormatPropertiesEXT vkFilterCubicImageViewImageFormatPropertiesEXT = new VkFilterCubicImageViewImageFormatPropertiesEXT();
+//        vkFilterCubicImageViewImageFormatPropertiesEXT.setFilterCubicMinmax(true);
         vkImageFormatProperties2.setpNext(vkFilterCubicImageViewImageFormatPropertiesEXT);
         
         result = vkGetPhysicalDeviceImageFormatProperties2(
@@ -2334,6 +2441,11 @@ public class Test11
             }
         }
         
+//        for (VkSurfaceFormatKHR surfaceFormat : swapchainSupportDetails.surfaceFormats)
+//        {
+//            log.debug("Surface format available {} {}", surfaceFormat.getFormat(), surfaceFormat.getColorSpace());
+//        }
+//
         for (VkSurfaceFormatKHR surfaceFormat : swapchainSupportDetails.surfaceFormats)
         {
             log.debug("Surface format available {}", surfaceFormat.getFormat());
@@ -2476,8 +2588,8 @@ public class Test11
     private void createWindowSurface()
     {
         VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo = new VkWaylandSurfaceCreateInfoKHR();
-        surfaceCreateInfo.setWlDisplay(waylandDisplay);
-        surfaceCreateInfo.setWlSurface(waylandSurface);
+        surfaceCreateInfo.setWlDisplay((WlDisplayHandle)waylandDisplay.getHandle());
+        surfaceCreateInfo.setWlSurface((WlSurfaceHandle)waylandSurface.getHandle());
         
         vulkanSurface = new VkSurfaceKHR();
         
@@ -2830,7 +2942,7 @@ public class Test11
         vulkanInstanceCreateInfo.setEnabledExtensionNames(enabledExtensions);
         vulkanInstanceCreateInfo.setEnabledLayerNames(vulkanGraphicsenabledLayerNames);
 
-        log.trace("Created the Vulkan instance creation information.");
+        log.trace("Attempting to create the Vulkan instance.");
 
         vulkanInstance = new VkInstance();
         VkResult result = vkCreateInstance(vulkanInstanceCreateInfo, (VkAllocationCallbacks)null, vulkanInstance);
@@ -2839,10 +2951,11 @@ public class Test11
             throw new AssertionError("Failed to create VkInstance: " + vkResultToString(result));
         }
 
-        log.trace("Created the Vulkan instance.  Instance number (the handle) is {}", String.format("%X", vulkanInstance.getHandle()));
+        log.trace("Created the Vulkan instance.  Its value is {}.", vulkanInstance.toString());
         
         if (validationDesired == true)
         {
+            log.trace("Validation is desired.");
             VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfoEXT = new VkDebugReportCallbackCreateInfoEXT();
             debugReportCallbackCreateInfoEXT.setFlags(
                     EnumSet.of(VkDebugReportFlagBitsEXT.VK_DEBUG_REPORT_ERROR_BIT_EXT,
@@ -2851,7 +2964,6 @@ public class Test11
             debugReportCallbackCreateInfoEXT.setCallbackObject(myDebugCallback);
             
             debugReportCallbackCreateInfoEXT.setUserData(null);
-//                debugReportCallbackCreateInfoEXT.setUserData(userData);
             
             debugCallbackHandle = new VkDebugReportCallbackEXT();
             result = vkCreateDebugReportCallbackEXT(
