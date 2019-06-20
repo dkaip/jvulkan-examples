@@ -105,13 +105,6 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkResetFenc
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUnmapMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDescriptorSets;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlCompositorCreateSurface;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlDisplayDispatch;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlDisplayGetRegistry;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRegistryBind;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlRoundTrip;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellGetShellSurface;
-//import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.wlShellSetTopLevel;
 import static com.CIMthetics.jvulkan.VulkanCore.VKUtil.vkResultToString;
 
 import java.io.IOException;
@@ -588,61 +581,7 @@ public class Test11
         
         waylandRegistry = waylandDisplay.getRegistry();
         
-//        log.debug("Wayland display:{}", waylandDisplayS.getHandle().toString());
         waylandDisplay.sync();
-        
-//      log.trace("Dispatching");
-//      wlDisplayDispatch((WlDisplayHandle)waylandDisplayS.getHandle());
-//      log.trace("Waiting for round trip");
-//      wlRoundTrip((WlDisplayHandle)waylandDisplayS.getHandle());
-      
-//        log.debug("Connecting to wayland display.");
-//        waylandDisplay = wlConnectDisplay(null);
-//        log.debug("Wayland display handle {}", waylandDisplay.toString());
-//        
-//        waylandRegistry = wlDisplayGetRegistry(waylandDisplay);
-//        log.debug("Wayland registry = {}", waylandRegistry.toString());
-//        
-//        log.trace("Adding Registry listener");
-//        wlRegistryAddListener(waylandRegistry, myRegistryListener, null);
-//        
-//        log.trace("Dispatching");
-//        wlDisplayDispatch(waylandDisplay);
-//        log.trace("Waiting for round trip");
-//        wlRoundTrip(waylandDisplay);
-//        
-//        LinkedList<WaylandGlobalRegistryEntry> registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
-//        if (registryEntries.size() != 1)
-//        {
-//            if (registryEntries.size() == 0)
-//            {
-//                log.error("Did not find the wl_compositor_interface in the registry.");
-//                System.exit(-1);
-//            }
-//            else if (registryEntries.size() > 1)
-//            {
-//                log.error("There was more than one wl_compositor_interface in the registry.");
-//                System.exit(-1);
-//            }
-//        }
-//        WaylandGlobalRegistryEntry compositorInterfaceEntry = registryEntries.get(0);
-//
-//        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_shell");
-//        if (registryEntries.size() != 1)
-//        {
-//            // Houston we have a problem
-//            if (registryEntries.size() == 0)
-//            {
-//                log.error("Did not find the wl_shell_interface in the registry.");
-//                System.exit(-1);
-//            }
-//            else if (registryEntries.size() > 1)
-//            {
-//                log.error("There was more than one wl_shell_interface in the registry.");
-//                System.exit(-1);
-//            }
-//        }
-//        WaylandGlobalRegistryEntry shellInterfaceEntry = registryEntries.get(0);
         
         /*
          * We need a slight delay so that the registry may be populated.  It is
@@ -652,7 +591,7 @@ public class Test11
          */
         try
         {
-            Thread.sleep(1500);
+            Thread.sleep(1200);
         }
         catch (InterruptedException e)
         {
@@ -673,6 +612,36 @@ public class Test11
 
         waylandDisplay.sync();
         waylandDisplay.dispatchDelayedEvents();
+        
+        /*
+         * This little bit here causes us to wait until the WlOutput(s) are
+         * completely updated before moving on.
+         */
+        int totalOutputs = registryEntries.size();
+        int updatedOutputs = 0;
+        while(updatedOutputs != totalOutputs)
+        {
+            // slow things down a little
+            try
+            {
+                Thread.sleep(50);
+            }
+            catch (InterruptedException e)
+            {
+                //I just don't care here;
+            }
+            
+            if (wlOutputs[updatedOutputs].getDataUpdateComplete() == true)
+            {
+                updatedOutputs++;
+            }
+        }
+
+        // Just for printing purposes
+        for(i = 0; i < registryEntries.size(); i++)
+        {
+            log.debug("WlOutput [{}] {}", i, wlOutputs[i].toString());
+        }
         
         registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
         if (registryEntries.size() != 1)
@@ -722,51 +691,13 @@ public class Test11
         waylandShellSurface.setTopLevel();
         
         waylandDisplay.sync();
-        waylandDisplay.dispatchDelayedEvents();
-
-        for(i = 0; i < registryEntries.size(); i++)
-        {
-            log.debug("WlOutput [{}] {}", i, wlOutputs[i].toString());
-            i++;
-        }
-        
-//        log.trace("binding compositor");
-//        VulkanHandle vulkanHandle;
-//        vulkanHandle = wlRegistryBind(
-//                waylandRegistry,
-//                compositorInterfaceEntry.getRegistryId(),
-//                compositorInterfaceEntry.getObjectName() + "_interface", // This is so ugly
-//                compositorInterfaceEntry.getObjectVersion());
-//        
-//        waylandCompositorInterface = new WlCompositor(vulkanHandle);
-//        
-//        log.trace("binding shell");
-//        vulkanHandle = wlRegistryBind(
-//                waylandRegistry,
-//                shellInterfaceEntry.getRegistryId(),
-//                shellInterfaceEntry.getObjectName() + "_interface", // This is so ugly
-//                shellInterfaceEntry.getObjectVersion());
-//        
-//        waylandShellInterface = new WlShell(vulkanHandle);
-//        
-//        waylandSurface = wlCompositorCreateSurface(waylandCompositorInterface);
-//        log.trace("Surface Created");
-//        
-//        waylandShellSurface = wlShellGetShellSurface(waylandShellInterface, waylandSurface);
-//        log.debug("Shell surface created {}", waylandShellSurface.toString());
-//        
-//        wlShellSurfaceSetTopLevel(waylandShellSurface);
-        
-//        log.trace("Dispatching");
-//        wlDisplayDispatch(waylandDisplay);
-//        log.trace("Waiting for round trip");
-//        wlRoundTrip(waylandDisplay);
+//        waylandDisplay.dispatchDelayedEvents();
     }
     
     private void cleanupWaylandWindow()
     {
         log.debug("Disconnecting from wayland display.");
-//        wlDisplayDisconnect(waylandDisplay);
+        waylandDisplay.disconnect();
     }
     
     private void initVulkan()
@@ -778,8 +709,8 @@ public class Test11
         
         pickPhysicalDevice();
         
-//        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, waylandDisplay);
-//        log.debug("Wayland presentaion support is {}", supported);
+        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, (WlDisplayHandle)waylandDisplay.getHandle());
+        log.debug("Wayland presentaion support is {}", supported);
         
         /*
          * If this is successful graphicsQueueFamiliyIndex should be set with
@@ -1412,7 +1343,7 @@ public class Test11
         descriptorSetLayoutCreateInfo.setBindings(descriptorSetLayoutBindingCollection);
         
         descriptorSetLayoutHandle = new VkDescriptorSetLayout();
-        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandle());
+        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandleValue());
         
         VkResult result = vkCreateDescriptorSetLayout(
                 vulkanLogicalDevice,
@@ -1424,7 +1355,7 @@ public class Test11
             throw new AssertionError("failed to create descriptor set layout!: " + vkResultToString(result));
         }
         
-        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandle());
+        log.trace("descriptorSetLayoutHandle is {}", descriptorSetLayoutHandle.getHandleValue());
     }
     
     private void createIndexBuffer()
@@ -2347,7 +2278,7 @@ public class Test11
          * the old swapchain now that we have created our shiny new one.
          */
         if (oldSwapchainHandle != null &&
-            oldSwapchainHandle.getHandle() != 0L)
+            oldSwapchainHandle.getHandleValue() != 0L)
         {
             log.trace("Attempting to destroy the old swapchain.");
             vkDestroySwapchainKHR(vulkanLogicalDevice, oldSwapchainHandle, null);
@@ -2977,7 +2908,7 @@ public class Test11
                 throw new AssertionError("Failed to create vkCreateDebugReportCallbackEXT: " + vkResultToString(result));
             }
             
-            log.debug("Callback handle is {}.", String.format("%x", debugCallbackHandle.getHandle()));
+            log.debug("Callback handle is {}.", String.format("%x", debugCallbackHandle.getHandleValue()));
             log.debug("Created debug callback stuff.");
         }
     }
