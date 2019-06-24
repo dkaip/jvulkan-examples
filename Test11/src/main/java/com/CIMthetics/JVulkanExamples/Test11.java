@@ -201,7 +201,6 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSampler;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSemaphore;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkShaderModule;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSwapchainKHR;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VulkanHandle;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.IntReturnValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAllocationCallbacks;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAttachmentDescription;
@@ -284,17 +283,16 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceI
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlCompositorHandle;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlDisplayHandle;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlRegistryHandle;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlShellHandle;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlShellSurfaceHandle;
 import com.CIMthetics.jvulkan.Wayland.Handles.WlSurfaceHandle;
 import com.CIMthetics.jvulkan.Wayland.Objects.WaylandGlobalRegistryEntry;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlCompositor;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlDisplaySingleton;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlKeyboard;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlOutput;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlPointer;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlRegistry;
+import com.CIMthetics.jvulkan.Wayland.Objects.WlSeat;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlShell;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlShellSurface;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
@@ -319,6 +317,9 @@ public class Test11
     private WlSurface           waylandSurface;
     private WlShellSurface      waylandShellSurface;
     private WlOutput            wlOutputs[] = null;
+    private WlSeat              waylandSeat;
+    private WlKeyboard          waylandKeyboard;
+    private WlPointer           waylandPointer;
     
 //    private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
@@ -666,6 +667,29 @@ public class Test11
          */
         waylandCompositor = (WlCompositor) waylandRegistry.bind(compositorInterfaceEntry);
         
+        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_seat");
+        if (registryEntries.size() != 1)
+        {
+            // Houston we have a problem
+            if (registryEntries.size() == 0)
+            {
+                log.error("Did not find the wl_seat in the registry.");
+                System.exit(-1);
+            }
+            else if (registryEntries.size() > 1)
+            {
+                log.error("There was more than one wl_seat in the registry.");
+                System.exit(-1);
+            }
+        }
+        WaylandGlobalRegistryEntry seatInterfaceEntry = registryEntries.get(0);
+
+        waylandSeat = (WlSeat)waylandRegistry.bind(seatInterfaceEntry);
+        waylandKeyboard = waylandSeat.getKeyboard();
+        waylandPointer = waylandSeat.getPointer();
+
+        waylandDisplay.dispatch();
+        waylandDisplay.sync();
         registryEntries = waylandRegistry.getRegistryEntriesFor("wl_shell");
         if (registryEntries.size() != 1)
         {
@@ -3148,8 +3172,16 @@ public class Test11
 
         log.debug("Entering main loop.");
         int i = 0;
+        
         while(i++ < 100)
         {
+            while( waylandDisplay.prepareRead() != 0)
+                waylandDisplay.dispatch();
+            
+            waylandDisplay.flush();
+            waylandDisplay.readEvents();
+            waylandDisplay.dispatchPending();
+            
 //      while(glfwWindowShouldClose(windowHandle) == false)
 //        {
 //            glfwPollEvents();

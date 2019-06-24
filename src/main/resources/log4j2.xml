@@ -10,7 +10,7 @@
       <layout type="PatternLayout" pattern="%d %C{2}.%M %m %ex%n"/><!-- class & line number -->
     </appender>
     <appender type="Console" name="FLOW">
-      <layout type="PatternLayout" pattern="%C{2}.%M %m %ex%n"/><!-- class & line number -->
+      <layout type="PatternLayout" pattern="%d{ABSOLUTE} %p %C{3}.%M %m %ex%n"/><!-- class & line number -->
     </appender>
     <appender type="File" name="File" fileName="${filename}">
       <layout type="PatternLayout">
