@@ -324,6 +324,7 @@ public class Test7
     
     private int totalNumberOfQueueFamilies = -1;
     private int graphicsQueueFamilyIndex = -1;
+    private int graphicsQueueFamilyNumberOfQueues = -1;
     private int presentationQueueFamilyIndex = -1;
     
     private VkQueue                 vulkanPresentationCommandsQueue;
@@ -1672,7 +1673,7 @@ public class Test7
 //
 //        physicalDeviceMemoryProperties.free();
 //
-        throw new AssertionError("Failed to find suitable memeory type.");
+        throw new AssertionError("Failed to find suitable memory type.");
     }
     
     private void reCreateSwapchain()
@@ -2725,7 +2726,7 @@ public class Test7
         graphicsQueueFamilyIndex = graphicsQueueIndex;
         
         // We are saving the total number of queue families for this device
-        totalNumberOfQueueFamilies = numberOfQueues;
+        graphicsQueueFamilyNumberOfQueues = numberOfQueues;
         
         // We are saving the device features for the chosen device
         chosenPhysicalDeviceFeatures = deviceFeatures;

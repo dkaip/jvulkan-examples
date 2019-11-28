@@ -2039,9 +2039,9 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         vertexInputBindingDescriptionCollection.add(vertexInputBindingDescription);
         
         /*
-         * The format VK_FORMAT_R32G32_SFLOAT being used here does not refer to 
+         * The format VK_FORMAT_R32G32B32_SFLOAT being used here does not refer to 
          * a color, but, rather indicates that the data is being sent to the
-         * shader as 2 32bit floats (vec2 in the shader);
+         * shader as 3 32bit floats (vec3 in the shader);
          * 
          * Below VK_FORMAT_R32G32B32_SFLOAT is used.  In this case it is indicating
          * that the data is being set to the shader as 3 32bit float (vec3 in
@@ -2152,10 +2152,6 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         colorBlendStateCreateInfo.setBlueBlendConstant(0.0f);
         colorBlendStateCreateInfo.setAlphaBlendConstant(0.0f);
         
-        Collection<VkDynamicState> dynamicStateCollection = new LinkedList<VkDynamicState>();
-        dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_VIEWPORT);
-        dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_LINE_WIDTH);
-        
         VkPipelineDepthStencilStateCreateInfo pipelineDepthStencilStateCreateInfo = 
                 new VkPipelineDepthStencilStateCreateInfo();
         pipelineDepthStencilStateCreateInfo.setDepthTestEnable(true);
@@ -2165,6 +2161,10 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         pipelineDepthStencilStateCreateInfo.setMinDepthBounds(0.0f);
         pipelineDepthStencilStateCreateInfo.setMaxDepthBounds(1.0f);
         pipelineDepthStencilStateCreateInfo.setStencilTestEnable(false);
+        
+        Collection<VkDynamicState> dynamicStateCollection = new LinkedList<VkDynamicState>();
+        dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_VIEWPORT);
+        dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_LINE_WIDTH);
         
         VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = new VkPipelineDynamicStateCreateInfo();
         dynamicStateCreateInfo.setDynamicStates(dynamicStateCollection);
