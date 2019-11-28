@@ -15,10 +15,6 @@
  */
 package com.CIMthetics.JVulkanExamples;
 
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SURFACE_EXTENSION_NAME;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanConstants.VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.VK_MAKE_VERSION;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.pushDataToVirtualMemory;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkAcquireNextImageKHR;
@@ -86,8 +82,7 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetBuffer
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetDeviceQueue;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetImageMemoryRequirements;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceFeatures;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceImageFormatProperties;
-import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceImageFormatProperties2;
+import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceFormatProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceMemoryProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkGetPhysicalDeviceQueueFamilyProperties;
@@ -107,6 +102,9 @@ import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkUpdateDes
 import static com.CIMthetics.jvulkan.VulkanCore.VK11.VulkanFunctions.vkWaitForFences;
 import static com.CIMthetics.jvulkan.VulkanCore.VKUtil.vkResultToString;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -123,6 +121,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.stb.STBImage;
 import org.slf4j.Logger;
@@ -150,9 +149,9 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkDynamicState;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFenceCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFilter;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFormat;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFormatFeatureFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkFrontFace;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageAspectFlagBits;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageCreateFlagBits;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageLayout;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageTiling;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Enums.VkImageType;
@@ -208,6 +207,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAttachmentReference;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkBufferCopy;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkBufferImageCopy;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkClearColorValue;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkClearDepthStencilValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkClearValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkComponentMapping;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkDescriptorBufferInfo;
@@ -217,8 +217,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkDescriptorSetLayoutBi
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkExtensionProperties;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkExtent2D;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkExtent3D;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageFormatProperties;
-import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageFormatProperties2;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkFormatProperties;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageMemoryBarrier;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageSubresourceLayers;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkImageSubresourceRange;
@@ -258,6 +257,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkImageView
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkInstanceCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkMemoryAllocateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkPipelineColorBlendStateCreateInfo;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkPipelineDepthStencilStateCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkPipelineDynamicStateCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkPipelineInputAssemblyStateCreateInfo;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.CreateInfos.VkPipelineLayoutCreateInfo;
@@ -277,33 +277,23 @@ import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkColorSpaceKHR;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkDebugReportCallbackEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Handles.VkSurfaceKHR;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkFilterCubicImageViewImageFormatPropertiesEXT;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceImageFormatInfo2;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.VkPhysicalDeviceImageViewImageFormatInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkDebugReportCallbackCreateInfoEXT;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkPipelineShaderStageCreateInfo;
 import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Structures.CreateInfos.VkWaylandSurfaceCreateInfoKHR;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlDisplayHandle;
-import com.CIMthetics.jvulkan.Wayland.Handles.WlSurfaceHandle;
 import com.CIMthetics.jvulkan.Wayland.Objects.WaylandGlobalRegistryEntry;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlCompositor;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlDisplaySingleton;
-import com.CIMthetics.jvulkan.Wayland.Objects.WlKeyboard;
-import com.CIMthetics.jvulkan.Wayland.Objects.WlOutput;
-import com.CIMthetics.jvulkan.Wayland.Objects.WlPointer;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlRegistry;
-import com.CIMthetics.jvulkan.Wayland.Objects.WlSeat;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlShell;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlShellSurface;
 import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
 
 /**
- * This is the vulkan tutorial on Texture mapping.  This started out as Test6.
+ * This is the vulkan tutorial on Texture mapping but no mipmapping.
  * 
  * @author Douglas Kaip
  *
- */
-public class Test11
+ */public class Test18
 {
     private Logger log;
 
@@ -316,12 +306,6 @@ public class Test11
     private WlShell             waylandShell;
     private WlSurface           waylandSurface;
     private WlShellSurface      waylandShellSurface;
-    private WlOutput            wlOutputs[] = null;
-    private WlSeat              waylandSeat;
-    private WlKeyboard          waylandKeyboard;
-    private WlPointer           waylandPointer;
-    
-//    private MyRegistryListener  myRegistryListener = new MyRegistryListener();
     
     private int     windowWidth     = 1024;
     private int     windowHeight    = 768;
@@ -342,7 +326,6 @@ public class Test11
     
     private int totalNumberOfQueueFamilies = -1;
     private int graphicsQueueFamilyIndex = -1;
-    private int graphicsQueueFamilyNumberOfQueues = -1;
     private int presentationQueueFamilyIndex = -1;
     
     private VkQueue                 vulkanPresentationCommandsQueue;
@@ -352,15 +335,12 @@ public class Test11
     private Collection<String> vulkanGraphicsenabledLayerNames = new ArrayList<String>();
 
     private MyDebugCallback     myDebugCallback = new MyDebugCallback();
-    @SuppressWarnings("unused")
-//    private MyRegistryListener  myWaylandRegistryListener = new MyRegistryListener();
     
     private volatile VkSwapchainKHR vulkanSwapchainHandle;
     private VkRenderPass            vulkanRenderPassHandle;
     private VkPipelineLayout        vulkanPipelineLayoutHandle;
     private VkPipeline              vulkanPipelineHandle;
     private VkCommandPool           vulkanGraphicsCommandPoolHandle;
-
 
 
     private SwapchainSupportDetails     swapchainSupportDetails;
@@ -381,6 +361,7 @@ public class Test11
     private static final int        MAX_FRAMES_IN_FLIGHT = 3;
 
     private BufferInformation       vertexBufferInformation = null;
+    private BufferInformation       vertexBufferInformation2 = null;
     private BufferInformation       indexBufferInformation = null;
     
     private ArrayList<BufferInformation> uniformBufferInformationCollection = new ArrayList<BufferInformation>();
@@ -392,6 +373,9 @@ public class Test11
     private VkImageView                 textureImageViewHandle = null;
     private VkSampler                   textureSamplerHandle = null;
 
+    private ImageBufferInformation      depthImageInformation = null;
+    private VkImageView                 depthImageViewHandle = null;
+    
     private String shaderPath = null;
     private String textureImagePath = null;
     
@@ -399,6 +383,7 @@ public class Test11
 
     private class BufferInformation
     {
+        BufferInformation() {}
         VkBuffer        bufferHandle;
         VkDeviceMemory  bufferMemoryHandle;
     }
@@ -409,34 +394,10 @@ public class Test11
         VkDeviceMemory  bufferMemoryHandle;
     }
     
-    private class Position
-    {
-        float x;
-        float y;
-        
-        Position(float x, float y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-    }
-    
-    private class Color
-    {
-        float redComponent;
-        float greenComponent;
-        float blueComponent;
-        
-        Color(float red, float green, float blue)
-        {
-            redComponent = red;
-            greenComponent = green;
-            blueComponent = blue;
-        }
-    }
-    
     private class UniformBufferObject
     {
+        UniformBufferObject() {}
+        
         Matrix4f model;
         
         Matrix4f view;
@@ -451,25 +412,10 @@ public class Test11
     
     private UniformBufferObject uniformBufferObject = new UniformBufferObject();
     
-    private class Vertex
-    {
-        Position position;
-        Color    color;
-        Position textureCoordinate;
-        
-        Vertex(Position position, Color color, Position textureCoordinate)
-        {
-            this.position           = position;
-            this.color              = color;
-            this.textureCoordinate  = textureCoordinate;
-        }
-    }
-    
-    private Vertex[] vertices;
-    
-    private int[] indices = new int[] {0, 1, 2, 0, 2, 3};
+    private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+    private ArrayList<Integer> indices = new ArrayList<Integer>();
 
-    public Test11()
+    public Test18()
     {
         log = LoggerFactory.getLogger("jvulkan-example");
         
@@ -523,43 +469,12 @@ public class Test11
         @SuppressWarnings("unused")
         VulkanFunctions vf = new VulkanFunctions(nativeLibraryPath, "libjvulkan-natives-Linux-x86_64.so");
         
-        vertices = new Vertex[4];
-        
-        Color color;
-        Position position;
-        Vertex vertex;
-        Position textureCoordinate;
-        
-        color = new Color(1.0f, 0.0f, 0.0f);
-        position = new Position(-0.5f, -0.5f);
-        textureCoordinate = new Position(1.0f, 0.0f);
-        vertex = new Vertex(position, color, textureCoordinate);
-        vertices[0] = vertex;
-
-        color = new Color(0.0f, 1.0f, 0.0f);
-        position = new Position(0.5f, -0.5f);
-        textureCoordinate = new Position(0.0f, 0.0f);
-        vertex = new Vertex(position, color, textureCoordinate);
-        vertices[1] = vertex;
-
-        color = new Color(0.0f, 0.0f, 1.0f);
-        position = new Position(0.5f, 0.5f);
-        textureCoordinate = new Position(0.0f, 1.0f);
-        vertex = new Vertex(position, color, textureCoordinate);
-        vertices[2] = vertex;
-
-        color = new Color(1.0f, 1.0f, 1.0f);
-        position = new Position(-0.5f, 0.5f);
-        textureCoordinate = new Position(1.0f, 1.0f);
-        vertex = new Vertex(position, color, textureCoordinate);
-        vertices[3] = vertex;
-
     }
     
 
     public static void main(String[] args)
     {
-        Test11 test = new Test11();
+        Test18 test = new Test18();
         
         test.init();
         
@@ -570,8 +485,6 @@ public class Test11
 
     private void init()
     {
-//        initGLFWWindow();
-        
         initWaylandWindow();
         initVulkan();
     }
@@ -601,51 +514,7 @@ public class Test11
             e.printStackTrace();
         }
         
-        LinkedList<WaylandGlobalRegistryEntry> registryEntries = waylandRegistry.getRegistryEntriesFor("wl_output");
-        wlOutputs = new WlOutput[registryEntries.size()];
-        log.debug("Number of outputs is {}.", registryEntries.size());
-        int i = 0;
-        for(WaylandGlobalRegistryEntry entry : registryEntries)
-        {
-            log.debug("Binding output {}", i);
-            wlOutputs[i] = (WlOutput)waylandRegistry.bind(entry);
-            i++;
-        }
-
-        waylandDisplay.sync();
-        waylandDisplay.dispatchDelayedEvents();
-        
-        /*
-         * This little bit here causes us to wait until the WlOutput(s) are
-         * completely updated before moving on.
-         */
-        int totalOutputs = registryEntries.size();
-        int updatedOutputs = 0;
-        while(updatedOutputs != totalOutputs)
-        {
-            // slow things down a little
-            try
-            {
-                Thread.sleep(50);
-            }
-            catch (InterruptedException e)
-            {
-                //I just don't care here;
-            }
-            
-            if (wlOutputs[updatedOutputs].getDataUpdateComplete() == true)
-            {
-                updatedOutputs++;
-            }
-        }
-
-        // Just for printing purposes
-        for(i = 0; i < registryEntries.size(); i++)
-        {
-            log.debug("WlOutput [{}] {}", i, wlOutputs[i].toString());
-        }
-        
-        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
+        LinkedList<WaylandGlobalRegistryEntry>registryEntries = waylandRegistry.getRegistryEntriesFor("wl_compositor");
         if (registryEntries.size() != 1)
         {
             if (registryEntries.size() == 0)
@@ -668,29 +537,6 @@ public class Test11
          */
         waylandCompositor = (WlCompositor) waylandRegistry.bind(compositorInterfaceEntry);
         
-        registryEntries = waylandRegistry.getRegistryEntriesFor("wl_seat");
-        if (registryEntries.size() != 1)
-        {
-            // Houston we have a problem
-            if (registryEntries.size() == 0)
-            {
-                log.error("Did not find the wl_seat in the registry.");
-                System.exit(-1);
-            }
-            else if (registryEntries.size() > 1)
-            {
-                log.error("There was more than one wl_seat in the registry.");
-                System.exit(-1);
-            }
-        }
-        WaylandGlobalRegistryEntry seatInterfaceEntry = registryEntries.get(0);
-
-        waylandSeat = (WlSeat)waylandRegistry.bind(seatInterfaceEntry);
-        waylandKeyboard = waylandSeat.getKeyboard();
-        waylandPointer = waylandSeat.getPointer();
-
-        waylandDisplay.dispatch();
-        waylandDisplay.sync();
         registryEntries = waylandRegistry.getRegistryEntriesFor("wl_shell");
         if (registryEntries.size() != 1)
         {
@@ -716,7 +562,6 @@ public class Test11
         waylandShellSurface.setTopLevel();
         
         waylandDisplay.sync();
-//        waylandDisplay.dispatchDelayedEvents();
     }
     
     private void cleanupWaylandWindow()
@@ -734,7 +579,7 @@ public class Test11
         
         pickPhysicalDevice();
         
-        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, (WlDisplayHandle)waylandDisplay.getHandle());
+        boolean supported = vkGetPhysicalDeviceWaylandPresentationSupportKHR(vulkanPhysicalDevice, graphicsQueueFamilyIndex, waylandDisplay.getHandle());
         log.debug("Wayland presentaion support is {}", supported);
         
         /*
@@ -773,15 +618,19 @@ public class Test11
         
         createGraphicsPipeline();
         
-        createFrameBuffers();
-
         createCommandPool();
         
+        createDepthResources();
+        
+        createFrameBuffers();
+
         createTextureImage();
         
         createTextureImageView();
         
         createTextureSampler();
+        
+        loadModel();
 
         createVertexBuffer();
         
@@ -796,6 +645,290 @@ public class Test11
         createCommandBuffers();
         
         createSyncObjects();
+    }
+    
+    private void loadModel()
+    {
+        ArrayList<Vector2f> textureCoordinatesRead = new ArrayList<Vector2f>();
+        
+        try
+        {
+            log.trace("Attemping to load object file {}.", "/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/chalet.obj");
+            File inputfile = new File("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/chalet.obj");
+            FileReader fileReader = new FileReader(inputfile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            
+            String inputLine;
+            inputLine = bufferedReader.readLine();
+            while (inputLine != null)
+            {
+                String[] piecesParts;
+                
+                piecesParts = inputLine.split(" ");
+                
+                if (piecesParts[0].equals("#") == true)
+                {
+                    inputLine = bufferedReader.readLine();
+                    continue;
+                }
+                else if (piecesParts[0].equals("v") == true)
+                {
+                    // Vertex data
+                    Vector3f newPosition = new Vector3f(
+                            Float.parseFloat(piecesParts[1]),
+                            Float.parseFloat(piecesParts[2]),
+                            Float.parseFloat(piecesParts[3]));
+                    
+                    vertices.add(new Vertex(newPosition));
+                    
+//                    log.trace("Adding vertext {}", newPosition.toString());
+                }
+                else if (piecesParts[0].equals("vt") == true)
+                {
+                    // Texture coordinate data
+                    Vector2f textCoord = new Vector2f(
+                            Float.parseFloat(piecesParts[1]),
+                            (1.0f - Float.parseFloat(piecesParts[2]))); // need to flip the Y coor since vulkan starts upper left and OPenGL starts lower left
+                    
+                    textureCoordinatesRead.add(textCoord);
+                    
+//                    log.trace("Saving texture coordinate {}", textCoord.toString());
+                }
+                else if (piecesParts[0].equals("f") == true)
+                {
+                    /*
+                     * Face data
+                     * 
+                     * Note: there will be issues if the above
+                     * information does not precede the face information
+                     * in the file.
+                     */
+                    int vertexIndex1;
+                    int vertexIndex2;
+                    int vertexIndex3;
+                    int textureCoordinatIndex1;
+                    int textureCoordinatIndex2;
+                    int textureCoordinatIndex3;
+                    
+                    String[] indexSet;
+                    
+                    indexSet = piecesParts[1].split("/");
+                    vertexIndex1 = Integer.parseInt(indexSet[0]);
+                    textureCoordinatIndex1 = Integer.parseInt(indexSet[1]);
+
+                    indexSet = piecesParts[2].split("/");
+                    vertexIndex2 = Integer.parseInt(indexSet[0]);
+                    textureCoordinatIndex2 = Integer.parseInt(indexSet[1]);
+
+                    indexSet = piecesParts[3].split("/");
+                    vertexIndex3 = Integer.parseInt(indexSet[0]);
+                    textureCoordinatIndex3 = Integer.parseInt(indexSet[1]);
+                    
+                    /*
+                     * It appears that the face "data" is 1 based and not zero based.
+                     */
+                    vertexIndex1 -= 1;
+                    vertexIndex2 -= 1;
+                    vertexIndex3 -= 1;
+                    
+                    textureCoordinatIndex1 -= 1;
+                    textureCoordinatIndex2 -= 1;
+                    textureCoordinatIndex3 -= 1;
+                    
+                    indices.add(vertexIndex1);
+                    indices.add(vertexIndex2);
+                    indices.add(vertexIndex3);
+                    
+//                    log.trace("Creating face {} {} {}", vertexIndex1, vertexIndex2, vertexIndex3);
+
+                    Vertex localVertex;
+                    Vector2f localTextureCoordinate;
+                    
+                    localTextureCoordinate = textureCoordinatesRead.get(textureCoordinatIndex1);
+                    localVertex = vertices.get(vertexIndex1);
+                    localVertex.textureCoordinate = localTextureCoordinate;
+//                    if (localVertex.textureCoordinate != null)
+//                    {
+//                        if (localVertex.textureCoordinate.equals(localTextureCoordinate) == true)
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to the same value previously.");
+//                        }
+//                        else
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to a different value previously.");
+//                        }
+//                    }
+                    
+
+                    localTextureCoordinate = textureCoordinatesRead.get(textureCoordinatIndex2);
+                    localVertex = vertices.get(vertexIndex2);
+                    localVertex.textureCoordinate = localTextureCoordinate;
+//                    if (localVertex.textureCoordinate != null)
+//                    {
+//                        if (localVertex.textureCoordinate.equals(localTextureCoordinate) == true)
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to the same value previously.");
+//                        }
+//                        else
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to a different value previously.");
+//                        }
+//                    }
+                    
+
+                    localTextureCoordinate = textureCoordinatesRead.get(textureCoordinatIndex3);
+                    localVertex = vertices.get(vertexIndex3);
+                    localVertex.textureCoordinate = localTextureCoordinate;
+//                    if (localVertex.textureCoordinate != null)
+//                    {
+//                        if (localVertex.textureCoordinate.equals(localTextureCoordinate) == true)
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to the same value previously.");
+//                        }
+//                        else
+//                        {
+//                            log.trace("Texture coordinate for vertex {} has been set to a different value previously.");
+//                        }
+//                    }
+                    
+                }
+                else
+                {
+                    log.warn("Unhandled format of {} encountered.", inputLine);
+                }
+
+                inputLine = bufferedReader.readLine();
+            }
+            
+            bufferedReader.close();
+            fileReader.close();
+        }
+        catch(IOException e)
+        {
+            throw new AssertionError("Failed to read object file: " + e.getMessage());
+        }
+        
+        log.debug("Loaded object file {}.", "/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/chalet.obj");
+        log.trace("{} Vertices loaded, {} texture coordinates read {} indices created.", vertices.size(), textureCoordinatesRead.size(), indices.size());
+        textureCoordinatesRead.clear();
+        
+//        HashMap<Vertex,Integer> uniqueVertices = new HashMap<Vertex,Integer>(vertices.size());
+//        
+//        for (int i = 0; i < indices.size(); i++)
+//        {
+//            int vertexIndex = indices.get(i);
+//            Vertex vertex = vertices.get(vertexIndex);
+//            
+//            Integer currentPosition = uniqueVertices.get(vertex);
+//            if (currentPosition == null)
+//            {
+//                /*
+//                 *  The vertex is unknown so save the vertex with the current
+//                 *  index from the indices array.
+//                 */
+//                uniqueVertices.put(vertex, Integer.valueOf(vertexIndex));
+//            }
+//            else
+//            {
+//                log.trace("Found non unique vertex at {}.", currentPosition);
+//                /*
+//                 * The vertex is already in the map so just re-associate
+//                 * the current index with this vertex.
+//                 */
+//                indices.set(i, currentPosition.intValue());
+//            }
+//        }
+//        
+//        int currentNumberOfVertices = uniqueVertices.size();
+//        log.trace("Vertices culled from {} to {}.", vertices.size(), currentNumberOfVertices);
+//        ArrayList<Vertex> newVertexList = new ArrayList<Vertex>(currentNumberOfVertices);
+//        
+//        BiConsumer<Vertex, Integer> biConsumer = (key, value) ->
+//            newVertexList.add(value.intValue(), key);
+//            
+//        uniqueVertices.forEach(biConsumer);
+//        
+//        vertices.clear();
+//        vertices = newVertexList;
+//        
+//        uniqueVertices.clear();
+    }
+    private void createDepthResources()
+    {
+        VkFormat depthFormat = findDepthFormat();
+        
+        depthImageInformation = createImage(
+                swapchainExtentUsed.getWidth(),
+                swapchainExtentUsed.getHeight(),
+                depthFormat,
+                VkImageTiling.VK_IMAGE_TILING_OPTIMAL,
+                EnumSet.of(VkImageUsageFlagBits.VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT),
+                EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+        
+        VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo();
+        imageViewCreateInfo.setImage(depthImageInformation.imageBufferHandle);
+        imageViewCreateInfo.setViewType(VkImageViewType.VK_IMAGE_VIEW_TYPE_2D);
+        imageViewCreateInfo.setFormat(depthFormat);
+        
+        VkImageSubresourceRange subResourceRange = new VkImageSubresourceRange();
+        subResourceRange.setAspectMask(EnumSet.of(VkImageAspectFlagBits.VK_IMAGE_ASPECT_DEPTH_BIT));
+        subResourceRange.setBaseMipLevel(0);
+        subResourceRange.setLevelCount(1);
+        subResourceRange.setBaseArrayLayer(0);
+        subResourceRange.setLayerCount(1);
+        imageViewCreateInfo.setSubresourceRange(subResourceRange);
+
+        depthImageViewHandle = new VkImageView();
+
+        VkResult result = vkCreateImageView(vulkanLogicalDevice, imageViewCreateInfo, null, depthImageViewHandle);
+        if (result != VkResult.VK_SUCCESS)
+        {
+            throw new AssertionError("Failed to create texture image view!: " + vkResultToString(result));
+        }
+
+        transitionImageLayout(
+                depthImageInformation.imageBufferHandle,
+                depthFormat,
+                VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED,
+                VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    }
+    
+    private static boolean hasStencilComponent(VkFormat format)
+    {
+        return (format == VkFormat.VK_FORMAT_D32_SFLOAT_S8_UINT ||
+                format == VkFormat.VK_FORMAT_D24_UNORM_S8_UINT);
+    }
+    
+    private VkFormat findDepthFormat()
+    {
+        VkFormat answer = findSupportedFormat(
+            new VkFormat[] {VkFormat.VK_FORMAT_D32_SFLOAT, VkFormat.VK_FORMAT_D32_SFLOAT_S8_UINT, VkFormat.VK_FORMAT_D24_UNORM_S8_UINT},
+            VkImageTiling.VK_IMAGE_TILING_OPTIMAL,
+            EnumSet.of(VkFormatFeatureFlagBits.VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT));
+        
+        return answer;
+    }
+    
+    private VkFormat findSupportedFormat(VkFormat candidates[], VkImageTiling tiling, EnumSet<VkFormatFeatureFlagBits> featureFlags)
+    {
+        for (int i = 0; i < candidates.length; i++)
+        {
+            VkFormatProperties formatProperties = new  VkFormatProperties();
+            vkGetPhysicalDeviceFormatProperties(vulkanPhysicalDevice, candidates[i], formatProperties);
+            
+            if (tiling == VkImageTiling.VK_IMAGE_TILING_LINEAR &&
+                (formatProperties.getLinearTilingFeatures().containsAll(featureFlags) == true))
+            {
+                return candidates[i];
+            }
+            else if (tiling == VkImageTiling.VK_IMAGE_TILING_OPTIMAL &&
+                     (formatProperties.getOptimalTilingFeatures().containsAll(featureFlags) == true))
+            {
+                return candidates[i];
+            }
+        }
+        
+        throw new AssertionError("Failed to find supported format");
     }
     
     private void createTextureSampler()
@@ -920,15 +1053,36 @@ public class Test11
          */
         imageMemoryBarrier.setSrcQueueFamilyIndex(VulkanConstants.VK_QUEUE_FAMILY_IGNORED);
         imageMemoryBarrier.setDstQueueFamilyIndex(VulkanConstants.VK_QUEUE_FAMILY_IGNORED);
-        
         imageMemoryBarrier.setImage(imageHandle);
 
         VkImageSubresourceRange subResourceRange = new VkImageSubresourceRange();
-        subResourceRange.setAspectMask(EnumSet.of(VkImageAspectFlagBits.VK_IMAGE_ASPECT_COLOR_BIT));
-        subResourceRange.setBaseMipLevel(0);
-        subResourceRange.setLevelCount(1);
-        subResourceRange.setBaseArrayLayer(0);
-        subResourceRange.setLayerCount(1);
+        if (newImageLayout == VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+        {
+            if (hasStencilComponent(imageformat) == false)
+            {
+                subResourceRange.setAspectMask(EnumSet.of(VkImageAspectFlagBits.VK_IMAGE_ASPECT_DEPTH_BIT));
+                subResourceRange.setBaseMipLevel(0);
+                subResourceRange.setLevelCount(1);
+                subResourceRange.setBaseArrayLayer(0);
+                subResourceRange.setLayerCount(1);
+            }
+            else
+            {
+                subResourceRange.setAspectMask(EnumSet.of(VkImageAspectFlagBits.VK_IMAGE_ASPECT_DEPTH_BIT, VkImageAspectFlagBits.VK_IMAGE_ASPECT_STENCIL_BIT));
+                subResourceRange.setBaseMipLevel(0);
+                subResourceRange.setLevelCount(1);
+                subResourceRange.setBaseArrayLayer(0);
+                subResourceRange.setLayerCount(1);
+            }
+        }
+        else
+        {
+            subResourceRange.setAspectMask(EnumSet.of(VkImageAspectFlagBits.VK_IMAGE_ASPECT_COLOR_BIT));
+            subResourceRange.setBaseMipLevel(0);
+            subResourceRange.setLevelCount(1);
+            subResourceRange.setBaseArrayLayer(0);
+            subResourceRange.setLayerCount(1);
+        }
 
         imageMemoryBarrier.setSubresourceRange(subResourceRange);
         
@@ -954,6 +1108,21 @@ public class Test11
             sourceStage = EnumSet.of(VkPipelineStageFlagBits.VK_PIPELINE_STAGE_TRANSFER_BIT);
             destinationStage = EnumSet.of(VkPipelineStageFlagBits.VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
         }
+        else if (oldImageLayout == VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED &&
+                newImageLayout == VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+       {
+           imageMemoryBarrier.setSrcAccessMask(EnumSet.noneOf(VkAccessFlagBits.class));
+           imageMemoryBarrier.setDstAccessMask(EnumSet.of(VkAccessFlagBits.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+                                                          VkAccessFlagBits.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT));
+           
+           sourceStage = EnumSet.of(VkPipelineStageFlagBits.VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+           destinationStage = EnumSet.of(VkPipelineStageFlagBits.VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
+       }
+       else
+       {
+           throw new AssertionError("Unsupported layout transition!");
+       }
+       
         
         Collection<VkImageMemoryBarrier> imageMemoryBarrierCollection = new LinkedList<VkImageMemoryBarrier>();
         imageMemoryBarrierCollection.add(imageMemoryBarrier);
@@ -1003,11 +1172,7 @@ public class Test11
         VkSubmitInfo submitInfo = new VkSubmitInfo();
         submitInfo.setCommandBuffers(commandBuffer);
         
-        Collection<VkSubmitInfo> submitInfoCollection = new LinkedList<VkSubmitInfo>();
-        submitInfoCollection.add(submitInfo);
-        
-        // TODO add convenience function(s) so I do not have to create collections
-        vkQueueSubmit(vulkanGraphicsCommandsQueue, submitInfoCollection, null);
+        vkQueueSubmit(vulkanGraphicsCommandsQueue, submitInfo, null);
         
         vkQueueWaitIdle(vulkanGraphicsCommandsQueue);
         
@@ -1022,7 +1187,8 @@ public class Test11
         int[] y = new int[1];
         int[] channels = new int[1];
 
-        ByteBuffer imageFromFile = STBImage.stbi_load(textureImagePath + "OrangeBird.jpg",
+        ByteBuffer imageFromFile = STBImage.stbi_load(textureImagePath + "chalet.jpg",
+//        ByteBuffer imageFromFile = STBImage.stbi_load("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/OrangeBird.jpg",
 //          ByteBuffer imageFromFile = STBImage.stbi_load("/home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/statue.jpg",
                 x,
                 y,
@@ -1031,7 +1197,8 @@ public class Test11
         
         if (imageFromFile == null)
         {
-            throw new AssertionError("Failed to load image from /home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/OrangeBird.jpg");
+            throw new AssertionError("Failed to load image from /home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/chalet.jpg");
+//            throw new AssertionError("Failed to load image from /home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/OrangeBird.jpg");
 //            throw new AssertionError("Failed to load image from /home/dkaip/JavaWorkspaces/CIMthetics/VulkanTutorial/bin/default/statue.jpg");
         }
 
@@ -1052,7 +1219,7 @@ public class Test11
         imageFromFile.position(0);
         STBImage.stbi_image_free(imageFromFile);
 
-        
+        log.debug("Creating staging buffer for Texture Image");
         BufferInformation stagingBufferInfo = createBuffer(
                 imageSize,
                 EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
@@ -1155,42 +1322,6 @@ public class Test11
         {
             throw new AssertionError("Failed to create image: " + vkResultToString(result));
         }
-        
-        VkImageFormatProperties vkImageFormatProperties = new VkImageFormatProperties();
-        result = vkGetPhysicalDeviceImageFormatProperties(
-                vulkanPhysicalDevice,
-                format,
-                VkImageType.VK_IMAGE_TYPE_2D,
-                tiling,
-                usageFlags,
-                EnumSet.noneOf(VkImageCreateFlagBits.class),
-                vkImageFormatProperties);
-        
-        VkPhysicalDeviceImageFormatInfo2 vkPhysicalDeviceImageFormatInfo2 = new VkPhysicalDeviceImageFormatInfo2();
-        vkPhysicalDeviceImageFormatInfo2.setFormat(format);
-        vkPhysicalDeviceImageFormatInfo2.setType(VkImageType.VK_IMAGE_TYPE_2D);
-        vkPhysicalDeviceImageFormatInfo2.setTiling(tiling);
-        vkPhysicalDeviceImageFormatInfo2.setUsage(usageFlags);
-        vkPhysicalDeviceImageFormatInfo2.setFlags(EnumSet.noneOf(VkImageCreateFlagBits.class));
-        
-        VkPhysicalDeviceImageViewImageFormatInfoEXT vkPhysicalDeviceImageViewImageFormatInfoEXT = new VkPhysicalDeviceImageViewImageFormatInfoEXT();
-        vkPhysicalDeviceImageViewImageFormatInfoEXT.setImageViewType(VkImageViewType.VK_IMAGE_VIEW_TYPE_2D);
-        vkPhysicalDeviceImageFormatInfo2.setpNext(vkPhysicalDeviceImageViewImageFormatInfoEXT);
-        
-        VkImageFormatProperties2 vkImageFormatProperties2 = new VkImageFormatProperties2();
-        VkFilterCubicImageViewImageFormatPropertiesEXT vkFilterCubicImageViewImageFormatPropertiesEXT = new VkFilterCubicImageViewImageFormatPropertiesEXT();
-//        vkFilterCubicImageViewImageFormatPropertiesEXT.setFilterCubicMinmax(true);
-        vkImageFormatProperties2.setpNext(vkFilterCubicImageViewImageFormatPropertiesEXT);
-        
-        result = vkGetPhysicalDeviceImageFormatProperties2(
-                vulkanPhysicalDevice,
-                vkPhysicalDeviceImageFormatInfo2,
-                vkImageFormatProperties2);
-        
-        log.debug("Result of vkGetPhysicalDeviceImageFormatProperties{}", vkImageFormatProperties.toString());
-        log.debug("Result of vkImageFormatProperties2{}", vkImageFormatProperties2.getImageFormatProperties().toString());
-        log.debug("vkPhysicalDeviceImageViewImageFormatInfoEXT {}", vkPhysicalDeviceImageViewImageFormatInfoEXT.toString());
-        log.debug("vkFilterCubicImageViewImageFormatPropertiesEXT {}", vkFilterCubicImageViewImageFormatPropertiesEXT.toString());
 
         VkMemoryRequirements imageMemoryRequirements = new VkMemoryRequirements();
         vkGetImageMemoryRequirements(vulkanLogicalDevice, textureImageHandle, imageMemoryRequirements);
@@ -1335,6 +1466,7 @@ public class Test11
         
         for (int i = 0; i < swapchainImageReferences.size(); i++)
         {
+            log.debug("Creating uniform buffer for swapchain {}.", i);
             BufferInformation uniformBufferInfo = createBuffer(
                     bufferSizeInBytes,
                     EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT),
@@ -1385,10 +1517,12 @@ public class Test11
     
     private void createIndexBuffer()
     {
-        int indexBufferSizeInBytes = indices.length * 4 /* sizeof int in bytes */;
+//        int indexBufferSizeInBytes = indices.length * 4 /* sizeof int in bytes */;
+        int indexBufferSizeInBytes = indices.size() * 4 /* sizeof int in bytes */;
 
+        log.debug("Creating staging buffer for Index Buffer");
         BufferInformation stagingBufferInfo = createBuffer(
-                (long)indexBufferSizeInBytes,
+                indexBufferSizeInBytes,
                 EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
                 EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
         
@@ -1405,10 +1539,10 @@ public class Test11
             throw new AssertionError("Failed to map memory: " + vkResultToString(result));
         }
 
-        IntBuffer intBuffer = IntBuffer.allocate(indices.length);
-        for (int i = 0; i < indices.length; i++)
+        IntBuffer intBuffer = IntBuffer.allocate(indices.size());
+        for (int i = 0; i < indices.size(); i++)
         {
-            intBuffer.put(indices[i]);
+            intBuffer.put(indices.get(i));
         }
 
         /*
@@ -1423,6 +1557,7 @@ public class Test11
         
         vkUnmapMemory(vulkanLogicalDevice, stagingBufferInfo.bufferMemoryHandle);
         
+        log.debug("Creating Index Buffer");
         indexBufferInformation = createBuffer(
                 indexBufferSizeInBytes,
                 EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
@@ -1511,13 +1646,17 @@ public class Test11
     
     private void createVertexBuffer()
     {
-        int positionSize = 2 /* for x and y */ * 4 /* for size of float */;
-        int colorSize = 3 /* for r, g, b, */ * 4 /* for size of float */;
-        int textureCoordinatesSize = 2 * 4;
-        int totalSizeInBytes = (positionSize + colorSize + textureCoordinatesSize) * 4 /* for 4 vertices */;
+//        int positionSize = 2 /* for x and y */ * 4 /* for size of float */;
+//        int colorSize = 3 /* for r, g, b, */ * 4 /* for size of float */;
+//        int textureCoordinatesSize = 2 * 4;
+//        int totalSizeInBytes = (positionSize + colorSize + textureCoordinatesSize) * 4 /* for 4 vertices */;
+        
+        int totalSizeInBytes = Vertex.getSizeOfVertexInBytes() * vertices.size();
+        
+        log.trace("Creating Vertex staging buffer: totalSize is {}", totalSizeInBytes);
         
         BufferInformation vertexStagingBufferInfo = createBuffer(
-                (long)totalSizeInBytes,
+                totalSizeInBytes,
                 EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
                 EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
         
@@ -1539,21 +1678,46 @@ public class Test11
             throw new AssertionError("Failed to map memory: " + vkResultToString(result));
         }
 
-        FloatBuffer floatBuffer = FloatBuffer.allocate(vertices.length * 7);
+        FloatBuffer floatBuffer = FloatBuffer.allocate(vertices.size() * 8);
+        FloatBuffer floatBuffer2 = FloatBuffer.allocate(vertices.size() * 8);
 //        log.debug("FloatBuffer has array {}", floatBuffer.hasArray());
 
-        for (int i = 0; i < vertices.length; i++)
+//        float maxX = Float.MIN_VALUE;
+//        float minX = Float.MAX_VALUE;
+        for (int i = 0; i < vertices.size(); i++)
         {
-            Vertex vertex = vertices[i];
+            Vertex vertex = vertices.get(i);
+            
+//            if (vertex.position.x > maxX)
+//            {
+//                maxX = vertex.position.x;
+//            }
+//
+//            if (vertex.position.x < minX)
+//            {
+//                minX = vertex.position.x;
+//            }
+//            
             floatBuffer.put(vertex.position.x);
             floatBuffer.put(vertex.position.y);
-            floatBuffer.put(vertex.color.redComponent);
-            floatBuffer.put(vertex.color.greenComponent);
-            floatBuffer.put(vertex.color.blueComponent);
+            floatBuffer.put(vertex.position.z);
+            floatBuffer.put(vertex.color.x);
+            floatBuffer.put(vertex.color.y);
+            floatBuffer.put(vertex.color.z);
             floatBuffer.put(vertex.textureCoordinate.x);
             floatBuffer.put(vertex.textureCoordinate.y);
+
+            floatBuffer2.put(vertex.position.x + 0.5f);
+            floatBuffer2.put(vertex.position.y);
+            floatBuffer2.put(vertex.position.z);
+            floatBuffer2.put(vertex.color.x);
+            floatBuffer2.put(vertex.color.y);
+            floatBuffer2.put(vertex.color.z);
+            floatBuffer2.put(vertex.textureCoordinate.x);
+            floatBuffer2.put(vertex.textureCoordinate.y);
         }
         
+//        log.debug("maxX:{} minX:{}", maxX, minX);
         /*
          * Now we need to copy our vertex data into the virtual memory that the
          * graphics card will use to access the data.
@@ -1564,10 +1728,9 @@ public class Test11
          */
         pushDataToVirtualMemory(floatBuffer, pointerToMappedMemory);
         
-        vkUnmapMemory(vulkanLogicalDevice, vertexStagingBufferInfo.bufferMemoryHandle);
-        
         if (vertexBufferInformation == null)
         {
+            log.debug("Creating Vertex Buffer");
             vertexBufferInformation = createBuffer(
                     totalSizeInBytes,
                     EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT),
@@ -1580,6 +1743,25 @@ public class Test11
          * This is mainly just to show how it is done.
          */
         copyBuffer(vertexStagingBufferInfo.bufferHandle, vertexBufferInformation.bufferHandle, totalSizeInBytes);
+        
+        pushDataToVirtualMemory(floatBuffer2, pointerToMappedMemory);
+        if (vertexBufferInformation2 == null)
+        {
+            log.debug("Creating Vertex Buffer2");
+            vertexBufferInformation2 = createBuffer(
+                    totalSizeInBytes,
+                    EnumSet.of(VkBufferUsageFlagBits.VK_BUFFER_USAGE_TRANSFER_DST_BIT, VkBufferUsageFlagBits.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT),
+                    EnumSet.of(VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+        }
+        
+        /*
+         * It really does not make sense in this case to use a staging buffer
+         * since create vertex buffer is only called once during initialization.
+         * This is mainly just to show how it is done.
+         */
+        copyBuffer(vertexStagingBufferInfo.bufferHandle, vertexBufferInformation2.bufferHandle, totalSizeInBytes);
+
+        vkUnmapMemory(vulkanLogicalDevice, vertexStagingBufferInfo.bufferMemoryHandle);
         
         vkDestroyBuffer(vulkanLogicalDevice, vertexStagingBufferInfo.bufferHandle, null);
         vkFreeMemory(vulkanLogicalDevice, vertexStagingBufferInfo.bufferMemoryHandle, null);
@@ -1600,64 +1782,6 @@ public class Test11
 
         endOneTimeCommand(commandBuffer);
 
-        
-//        VkCommandBufferAllocateInfo commandBufferAllocateInfo = new VkCommandBufferAllocateInfo();
-//        commandBufferAllocateInfo.setLevel(VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-//        commandBufferAllocateInfo.setCommandPool(vulkanGraphicsCommandPoolHandle);
-//        commandBufferAllocateInfo.setCommandBufferCount(1);
-//        
-//        ArrayList<VkCommandBuffer> commandBufferCollection = new ArrayList<VkCommandBuffer>();
-//        commandBufferCollection.add(new VkCommandBuffer());
-//        
-//        VkResult result = vkAllocateCommandBuffers(vulkanLogicalDevice, commandBufferAllocateInfo, commandBufferCollection);
-//        if (result != VkResult.VK_SUCCESS)
-//        {
-//            throw new AssertionError("Failed to allocate render command buffer: " + vulkanResultToString(result));
-//        }
-//
-//        VkCommandBuffer commandBuffer = commandBufferCollection.get(0);
-//        VkCommandBufferBeginInfo commandBufferBeginInfo = new VkCommandBufferBeginInfo();
-//        commandBufferBeginInfo.setFlags(EnumSet.of(VkCommandBufferUsageFlagBits.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT));
-//        
-//        result = vkBeginCommandBuffer(commandBuffer, commandBufferBeginInfo);
-//        if (result != VkResult.VK_SUCCESS)
-//        {
-//            throw new AssertionError("Failed to begin recording command buffer: " + vulkanResultToString(result));
-//        }
-//        
-//        VkBufferCopy copyRegion = new VkBufferCopy(0L, 0L, totalSizeInBytes);
-//        Collection<VkBufferCopy> copyRegionCollection = new LinkedList<VkBufferCopy>();
-//        copyRegionCollection.add(copyRegion);
-//        
-//        vkCmdCopyBuffer(commandBuffer, sourceBuffer, destinationBuffer, copyRegionCollection);
-//
-//        result = vkEndCommandBuffer(commandBuffer);
-//        if (result != VkResult.VK_SUCCESS)
-//        {
-//            throw new AssertionError("Failed to end recording command buffer: " + vulkanResultToString(result));
-//        }
-//
-//        VkSubmitInfo submitInfo = new VkSubmitInfo();
-//        submitInfo.setCommandBuffers(commandBuffer);
-//        
-//        Collection<VkSubmitInfo> submitInfoCollection = new LinkedList<VkSubmitInfo>();
-//        submitInfoCollection.add(submitInfo);
-//        
-//        result = vkQueueSubmit(vulkanGraphicsCommandsQueue, submitInfoCollection, null);
-//        if (result != VkResult.VK_SUCCESS)
-//        {
-//            throw new AssertionError("Failed to submit command to vulkanGraphicsCommandsQueue: " + vulkanResultToString(result));
-//        }
-//
-//        /*
-//         * I'm not sure if this should be here in a normal situation...this seems
-//         * to drag to world to a stop just to do this buffer copy.  I am thinking
-//         * that in a "production" case you would use a fence or something to allow
-//         * this to be done asynchronously.
-//         */
-//        vkQueueWaitIdle(vulkanGraphicsCommandsQueue);
-//        
-//        vkFreeCommandBuffers(vulkanLogicalDevice, vulkanGraphicsCommandPoolHandle, submitInfo.getCommandBuffers());
     }
     
     int findMemoryType(BitSet typeFilter, EnumSet<VkMemoryPropertyFlagBits> memoryPropertyFlags)
@@ -1727,6 +1851,8 @@ public class Test11
         
         createGraphicsPipeline();
         
+        createDepthResources();
+        
         createFrameBuffers();
         
         createCommandBuffers();
@@ -1794,11 +1920,15 @@ public class Test11
 
         swapchainRenderCommandBuffers.addAll(commandBufferCollection);
         
-        VkClearColorValue clearColorValue = new VkClearColorValue(0.0f, 0.0f, 0.0f, 0.0f);
-        
+        VkClearColorValue clearColorValue = new VkClearColorValue(0.0f, 0.0f, 0.0f, 1.0f);
         VkClearValue clearColor = new VkClearValue(clearColorValue);
-        Collection<VkClearValue> clearColorCollection = new LinkedList<VkClearValue>();
-        clearColorCollection.add(clearColor);
+
+        VkClearDepthStencilValue clearStencilValue = new VkClearDepthStencilValue(1.0f, 0);
+        VkClearValue clearStencil = new VkClearValue(clearStencilValue);
+        
+        Collection<VkClearValue> clearValuesCollection = new LinkedList<VkClearValue>();
+        clearValuesCollection.add(clearColor);
+        clearValuesCollection.add(clearStencil);
         
         // Begin command buffer recording
         for (int i = 0; i < swapchainRenderCommandBuffers.size(); i++)
@@ -1820,7 +1950,7 @@ public class Test11
             VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo();
             renderPassBeginInfo.setRenderPass(vulkanRenderPassHandle);
             renderPassBeginInfo.setFramebuffer(swapchainFramebufferReferences.get(i));
-            renderPassBeginInfo.setClearValues(clearColorCollection);
+            renderPassBeginInfo.setClearValues(clearValuesCollection);
             renderPassBeginInfo.setRenderArea(renderArea);
             
             vkCmdBeginRenderPass(commandBuffer, renderPassBeginInfo, VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
@@ -1829,9 +1959,11 @@ public class Test11
             
             Collection<VkBuffer> bufferCollection = new LinkedList<VkBuffer>();
             bufferCollection.add(vertexBufferInformation.bufferHandle);
+            bufferCollection.add(vertexBufferInformation2.bufferHandle);
             
             long[] offsets = new long[1];
             offsets[0] = 0L;
+//            offsets[1] = 0L;
 
             log.debug("Binding vertex buffer for swapchainRenderCommandBuffer {}", i);
             vkCmdBindVertexBuffers(commandBuffer, 0, bufferCollection, offsets);
@@ -1849,7 +1981,7 @@ public class Test11
                     tempDescriptorSetCollection,
                     null);
             
-            vkCmdDrawIndexed(commandBuffer, indices.length, 1, 0, 0, 0);
+            vkCmdDrawIndexed(commandBuffer, indices.size(), 1, 0, 0, 0);
             
             vkCmdEndRenderPass(commandBuffer);
             
@@ -1884,6 +2016,7 @@ public class Test11
         {
             Collection<VkImageView> imageViewCollection = new LinkedList<VkImageView>();
             imageViewCollection.add(swapchainImageViewReferences.get(i));
+            imageViewCollection.add(depthImageViewHandle);
             
             VkFramebufferCreateInfo framebufferCreateInfo = new VkFramebufferCreateInfo();
             framebufferCreateInfo.setRenderPass(vulkanRenderPassHandle);
@@ -1916,10 +2049,10 @@ public class Test11
         try
         {
             vertexShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial6Shader.vert.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.vert.spv", vulkanLogicalDevice);
             
             fragmentShaderModuleReferenceHandle =
-                    loadShader(shaderPath + "VulkanTutorial6Shader.frag.spv", vulkanLogicalDevice);
+                    loadShader(shaderPath + "VulkanTutorial8Shader.frag.spv", vulkanLogicalDevice);
             
             vertexStageCreateInfo = new VkPipelineShaderStageCreateInfo();
             vertexStageCreateInfo.setName("main");
@@ -1945,16 +2078,17 @@ public class Test11
         VkVertexInputBindingDescription vertexInputBindingDescription =
                 new VkVertexInputBindingDescription(
                         0 /* only one binding */,
-                        (2 /* for position */ + 3 /* for color */ + 2 /* for texture coordinates */) * 4 /* for size of float */,
+//                        (2 /* for position */ + 3 /* for color */ + 2 /* for texture coordinates */) * 4 /* for size of float */,
+                        Vertex.getSizeOfVertexInBytes(),
                         VkVertexInputRate.VK_VERTEX_INPUT_RATE_VERTEX);
         
         Collection<VkVertexInputBindingDescription> vertexInputBindingDescriptionCollection = new LinkedList<VkVertexInputBindingDescription>();
         vertexInputBindingDescriptionCollection.add(vertexInputBindingDescription);
         
         /*
-         * The format VK_FORMAT_R32G32_SFLOAT being used here does not refer to 
+         * The format VK_FORMAT_R32G32B32_SFLOAT being used here does not refer to 
          * a color, but, rather indicates that the data is being sent to the
-         * shader as 2 32bit floats (vec2 in the shader);
+         * shader as 3 32bit floats (vec3 in the shader);
          * 
          * Below VK_FORMAT_R32G32B32_SFLOAT is used.  In this case it is indicating
          * that the data is being set to the shader as 3 32bit float (vec3 in
@@ -1967,8 +2101,9 @@ public class Test11
                 new VkVertexInputAttributeDescription(
                         0 /* corresponds to layout(location = 0) in vertex shader */,
                         0 /* only 1 binding */,
-                        VkFormat.VK_FORMAT_R32G32_SFLOAT,
-                        0 /* corresponds the the position element in the array to be built */);
+                        VkFormat.VK_FORMAT_R32G32B32_SFLOAT,
+                        Vertex.getPositionOffset());
+//                        0 /* corresponds the the position element in the array to be built */);
         
         vertexAttributeDescriptionCollection.add(vertexInputAttributeDescription);
         
@@ -1978,7 +2113,8 @@ public class Test11
                         1 /* corresponds to layout(location = 1) in vertex shader */,
                         0 /* only 1 binding */,
                         VkFormat.VK_FORMAT_R32G32B32_SFLOAT,
-                        2 /* for x and y (position) */ * 4 /* size of float */);
+                        Vertex.getColorOffset());
+//                        2 /* for x and y (position) */ * 4 /* size of float */);
         
         vertexAttributeDescriptionCollection.add(vertexInputAttributeDescription);
         
@@ -1988,7 +2124,8 @@ public class Test11
                         2 /* corresponds to layout(location = 2) in vertex shader */,
                         0 /* only 1 binding */,
                         VkFormat.VK_FORMAT_R32G32_SFLOAT,
-                        (2 /* for x and y (position) */ * 4 /* size of float */) + (3 /*color info */ * 4 /* sizeof float */));
+                        Vertex.getTextureCoordinateOffset());
+//                        (2 /* for x and y (position) */ * 4 /* size of float */) + (3 /*color info */ * 4 /* sizeof float */));
         
         vertexAttributeDescriptionCollection.add(vertexInputAttributeDescription);
         
@@ -2006,8 +2143,8 @@ public class Test11
         VkViewport vulkanViewport = new VkViewport();
         vulkanViewport.setX(0.0f);
         vulkanViewport.setY(0.0f);
-        vulkanViewport.setWidth((float)swapchainExtentUsed.getWidth());
-        vulkanViewport.setHeight((float)swapchainExtentUsed.getHeight());
+        vulkanViewport.setWidth(swapchainExtentUsed.getWidth());
+        vulkanViewport.setHeight(swapchainExtentUsed.getHeight());
         vulkanViewport.setMinDepth(0.0f);
         vulkanViewport.setMaxDepth(1.0f);
         
@@ -2062,6 +2199,16 @@ public class Test11
         colorBlendStateCreateInfo.setBlueBlendConstant(0.0f);
         colorBlendStateCreateInfo.setAlphaBlendConstant(0.0f);
         
+        VkPipelineDepthStencilStateCreateInfo pipelineDepthStencilStateCreateInfo = 
+                new VkPipelineDepthStencilStateCreateInfo();
+        pipelineDepthStencilStateCreateInfo.setDepthTestEnable(true);
+        pipelineDepthStencilStateCreateInfo.setDepthWriteEnable(true);
+        pipelineDepthStencilStateCreateInfo.setDepthCompareOp(VkCompareOp.VK_COMPARE_OP_LESS);
+        pipelineDepthStencilStateCreateInfo.setDepthBoundsTestEnable(false);
+        pipelineDepthStencilStateCreateInfo.setMinDepthBounds(0.0f);
+        pipelineDepthStencilStateCreateInfo.setMaxDepthBounds(1.0f);
+        pipelineDepthStencilStateCreateInfo.setStencilTestEnable(false);
+        
         Collection<VkDynamicState> dynamicStateCollection = new LinkedList<VkDynamicState>();
         dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_VIEWPORT);
         dynamicStateCollection.add(VkDynamicState.VK_DYNAMIC_STATE_LINE_WIDTH);
@@ -2094,6 +2241,7 @@ public class Test11
         graphicsPipelineCreateInfo.setLayout(vulkanPipelineLayoutHandle);
         graphicsPipelineCreateInfo.setRenderPass(vulkanRenderPassHandle);
         graphicsPipelineCreateInfo.setSubpass(0);
+        graphicsPipelineCreateInfo.setDepthStencilState(pipelineDepthStencilStateCreateInfo);
         
         Collection<VkGraphicsPipelineCreateInfo> graphicsPipelineCreateInfoCollection = new LinkedList<VkGraphicsPipelineCreateInfo>();
         graphicsPipelineCreateInfoCollection.add(graphicsPipelineCreateInfo);
@@ -2137,19 +2285,35 @@ public class Test11
         colorAttachment.setInitialLayout(VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED);
         colorAttachment.setFinalLayout(VkImageLayout.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-        Collection<VkAttachmentDescription> colorAttachmentCollection = new LinkedList<VkAttachmentDescription>();
-        colorAttachmentCollection.add(colorAttachment);
+        VkAttachmentDescription stencilAttachment = new VkAttachmentDescription();
+        stencilAttachment.setFormat(findDepthFormat());
+        stencilAttachment.setSamples(VkSampleCountFlagBits.VK_SAMPLE_COUNT_1_BIT);
+        stencilAttachment.setLoadOp(VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_CLEAR);
+        stencilAttachment.setStoreOp(VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_STORE);
+        stencilAttachment.setStencilLoadOp(VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+        stencilAttachment.setStencilStoreOp(VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_DONT_CARE);
+        stencilAttachment.setInitialLayout(VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED);
+        stencilAttachment.setFinalLayout(VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+        Collection<VkAttachmentDescription> attachmentDescriptionCollection = new LinkedList<VkAttachmentDescription>();
+        attachmentDescriptionCollection.add(colorAttachment);
+        attachmentDescriptionCollection.add(stencilAttachment);
         
         VkAttachmentReference colorAttachmentReference = new VkAttachmentReference();
         colorAttachmentReference.setAttachment(0);
         colorAttachmentReference.setLayout(VkImageLayout.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
+        VkAttachmentReference depthAttachmentReference = new VkAttachmentReference();
+        depthAttachmentReference.setAttachment(1);
+        depthAttachmentReference.setLayout(VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
         Collection<VkAttachmentReference> colorAttachmentReferenceCollection = new LinkedList<VkAttachmentReference>();
         colorAttachmentReferenceCollection.add(colorAttachmentReference);
-        
+
         VkSubpassDescription subpassDescription = new VkSubpassDescription();
         subpassDescription.setPipelineBindPoint(VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS);
         subpassDescription.setColorAttachments(colorAttachmentReferenceCollection);
+        subpassDescription.setDepthStencilAttachment(depthAttachmentReference);
         
         Collection<VkSubpassDescription> subpassDescriptionCollection = new LinkedList<VkSubpassDescription>();
         subpassDescriptionCollection.add(subpassDescription);
@@ -2168,7 +2332,7 @@ public class Test11
         subpassDependencyCollection.add(subpassDependency);
         
         VkRenderPassCreateInfo renderPassCreateInfo = new VkRenderPassCreateInfo();
-        renderPassCreateInfo.setAttachments(colorAttachmentCollection);
+        renderPassCreateInfo.setAttachments(attachmentDescriptionCollection);
         renderPassCreateInfo.setSubpasses(subpassDescriptionCollection);
         renderPassCreateInfo.setDependencies(subpassDependencyCollection);
         
@@ -2218,7 +2382,6 @@ public class Test11
             }
             
             swapchainImageViewReferences.add(imageViewHandle);
-            
         }
         
         log.trace("Created the swapchain image views.");
@@ -2397,11 +2560,6 @@ public class Test11
             }
         }
         
-//        for (VkSurfaceFormatKHR surfaceFormat : swapchainSupportDetails.surfaceFormats)
-//        {
-//            log.debug("Surface format available {} {}", surfaceFormat.getFormat(), surfaceFormat.getColorSpace());
-//        }
-//
         for (VkSurfaceFormatKHR surfaceFormat : swapchainSupportDetails.surfaceFormats)
         {
             log.debug("Surface format available {}", surfaceFormat.getFormat());
@@ -2544,8 +2702,8 @@ public class Test11
     private void createWindowSurface()
     {
         VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo = new VkWaylandSurfaceCreateInfoKHR();
-        surfaceCreateInfo.setWlDisplay((WlDisplayHandle)waylandDisplay.getHandle());
-        surfaceCreateInfo.setWlSurface((WlSurfaceHandle)waylandSurface.getHandle());
+        surfaceCreateInfo.setWlDisplay(waylandDisplay.getHandle());
+        surfaceCreateInfo.setWlSurface(waylandSurface.getHandle());
         
         vulkanSurface = new VkSurfaceKHR();
         
@@ -2655,7 +2813,7 @@ public class Test11
     {
         vulkanGraphicsDeviceExtensionNames = null;
         vulkanGraphicsDeviceExtensionNames = new ArrayList<String>();
-        vulkanGraphicsDeviceExtensionNames.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+        vulkanGraphicsDeviceExtensionNames.add(VulkanConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     }
 
     private class ScoreResult
@@ -2728,7 +2886,7 @@ public class Test11
         graphicsQueueFamilyIndex = graphicsQueueIndex;
         
         // We are saving the total number of queue families for this device
-        graphicsQueueFamilyNumberOfQueues = numberOfQueues;
+        totalNumberOfQueueFamilies = numberOfQueues;
         
         // We are saving the device features for the chosen device
         chosenPhysicalDeviceFeatures = deviceFeatures;
@@ -2774,7 +2932,7 @@ public class Test11
         for (VkExtensionProperties extensionProperty : extensionProperties)
         {
 //            log.debug("Extension Name {}", extensionProperty.getExtensionName());
-            if (extensionProperty.getExtensionName().equals(VK_KHR_SWAPCHAIN_EXTENSION_NAME) == true)
+            if (extensionProperty.getExtensionName().equals(VulkanConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME) == true)
             {
                 foundTheExtensions = true;
                 break;
@@ -2783,7 +2941,7 @@ public class Test11
         
         if (foundTheExtensions == false)
         {
-            log.error("Required extension of {} not available in device.", VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+            log.error("Required extension of {} not available in device.", VulkanConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME);
             scoreResult.score = -1;
             return scoreResult;
         }
@@ -2873,15 +3031,15 @@ public class Test11
 //        }
 //
         ArrayList<String> requiredExtensions = new ArrayList<String>();
-        requiredExtensions.add(VK_KHR_SURFACE_EXTENSION_NAME);
+        requiredExtensions.add(VulkanConstants.VK_KHR_SURFACE_EXTENSION_NAME);
         
         log.debug("Validation layers enabled = {}.", validationDesired);
         
         ArrayList<String> enabledExtensions = new ArrayList<String>();
         
         enabledExtensions.addAll(requiredExtensions);
-        enabledExtensions.add(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-        enabledExtensions.add(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+        enabledExtensions.add(VulkanConstants.VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        enabledExtensions.add(VulkanConstants.VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
         
         // Setup the desired/required validation layers (as defined above)
         if (validationDesired == true)
@@ -2898,7 +3056,7 @@ public class Test11
         vulkanInstanceCreateInfo.setEnabledExtensionNames(enabledExtensions);
         vulkanInstanceCreateInfo.setEnabledLayerNames(vulkanGraphicsenabledLayerNames);
 
-        log.trace("Attempting to create the Vulkan instance.");
+        log.trace("Created the Vulkan instance creation information.");
 
         vulkanInstance = new VkInstance();
         VkResult result = vkCreateInstance(vulkanInstanceCreateInfo, (VkAllocationCallbacks)null, vulkanInstance);
@@ -2907,11 +3065,10 @@ public class Test11
             throw new AssertionError("Failed to create VkInstance: " + vkResultToString(result));
         }
 
-        log.trace("Created the Vulkan instance.  Its value is {}.", vulkanInstance.toString());
+        log.trace("Created the Vulkan instance.  Instance number (the handle) is {}", String.format("%X", vulkanInstance.getHandleValue()));
         
         if (validationDesired == true)
         {
-            log.trace("Validation is desired.");
             VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfoEXT = new VkDebugReportCallbackCreateInfoEXT();
             debugReportCallbackCreateInfoEXT.setFlags(
                     EnumSet.of(VkDebugReportFlagBitsEXT.VK_DEBUG_REPORT_ERROR_BIT_EXT,
@@ -2920,6 +3077,7 @@ public class Test11
             debugReportCallbackCreateInfoEXT.setCallbackObject(myDebugCallback);
             
             debugReportCallbackCreateInfoEXT.setUserData(null);
+//                debugReportCallbackCreateInfoEXT.setUserData(userData);
             
             debugCallbackHandle = new VkDebugReportCallbackEXT();
             result = vkCreateDebugReportCallbackEXT(
@@ -3006,6 +3164,18 @@ public class Test11
 //    
     private void cleanupSwapchain(boolean shuttingDown)
     {
+        log.trace("Attempting to destroy the depth image view.");
+        vkDestroyImageView(vulkanLogicalDevice, depthImageViewHandle, null);
+        log.debug("Destroyed the depth image view.");
+        
+        log.trace("Attempting to destroy the depth image.");
+        vkDestroyImage(vulkanLogicalDevice, depthImageInformation.imageBufferHandle, null);
+        log.debug("Destroyed the depth image.");
+        
+        log.trace("Attempting to release the depth image memory.");
+        vkFreeMemory(vulkanLogicalDevice, depthImageInformation.bufferMemoryHandle, null);
+        log.debug("Released the depth image memory.");
+        
         log.trace("Attempting to destroy the framebuffers.");
         for (VkFramebuffer handle : swapchainFramebufferReferences)
         {
@@ -3173,16 +3343,8 @@ public class Test11
 
         log.debug("Entering main loop.");
         int i = 0;
-        
         while(i++ < 100)
         {
-            while( waylandDisplay.prepareRead() != 0)
-                waylandDisplay.dispatch();
-            
-            waylandDisplay.flush();
-            waylandDisplay.readEvents();
-            waylandDisplay.dispatchPending();
-            
 //      while(glfwWindowShouldClose(windowHandle) == false)
 //        {
 //            glfwPollEvents();
@@ -3420,7 +3582,7 @@ public class Test11
         
         deltaTimeInms %= 4000;
         
-        double angleInDegrees = ((double)deltaTimeInms/4000.0 * 360.0);
+        double angleInDegrees = (deltaTimeInms/4000.0 * 360.0);
         log.trace("Computed angle is {} degrees.", angleInDegrees);
         
         float angleInRadians = (float)Math.toRadians(angleInDegrees);
