@@ -1377,16 +1377,6 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         descriptorSetAllocateInfo.setDescriptorPool(descriptorPoolHandle);
         descriptorSetAllocateInfo.setSetLayouts(descriptorSets);
         
-        /*
-         *FIXME
-         * Modify vkAllocateDescriptorSets so that it creates the descriptor set
-         * handles as needed and adds them to the collection.  In this case
-         * having to add empty handles to the collection first is icky.
-         */
-        for (int i = 0; i < setsNeeded; i++)
-        {
-            descriptorSetHandles.add(new VkDescriptorSet());
-        }
         VkResult result = vkAllocateDescriptorSets(vulkanLogicalDevice, descriptorSetAllocateInfo, descriptorSetHandles);
         if (result != VkResult.VK_SUCCESS)
         {
