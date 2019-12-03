@@ -200,6 +200,7 @@ import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSampler;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSemaphore;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkShaderModule;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Handles.VkSwapchainKHR;
+import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.BooleanReturnValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.IntReturnValue;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAllocationCallbacks;
 import com.CIMthetics.jvulkan.VulkanCore.VK11.Structures.VkAttachmentDescription;
@@ -2594,21 +2595,22 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
     
     private void findPresentationQueueFamily()
     {
-        boolean presentationIsSupported[] = new boolean[totalNumberOfQueueFamilies];
+        BooleanReturnValue presentationIsSupported[] = new BooleanReturnValue[totalNumberOfQueueFamilies];
         for (int i = 0; i < totalNumberOfQueueFamilies; i++)
         {
+            presentationIsSupported[i] = new BooleanReturnValue();
             VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(
                     vulkanPhysicalDevice,
                     i,
                     vulkanSurface,
-                    presentationIsSupported);
+                    presentationIsSupported[i]);
             if (result != VkResult.VK_SUCCESS)
             {
                 throw new AssertionError("Failed to get physical device surface support: " + vkResultToString(result));
             }
         }
-        log.debug("Supported [0] ={}.", presentationIsSupported[0]);
-        log.debug("Supported [1] ={}.", presentationIsSupported[1]);
+        log.debug("Supported [0] ={}.", presentationIsSupported[0].getValue());
+        log.debug("Supported [1] ={}.", presentationIsSupported[1].getValue());
         /*
          * For now anyway we are going to consider it a best case situation in
          * the case where the graphics commands queue and the presentation
@@ -2618,15 +2620,15 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         boolean bestCaseAvailable = false;
         for (int i = 0; i < totalNumberOfQueueFamilies; i++)
         {
-            if (presentationIsSupported[i] == true)
+            if (presentationIsSupported[i].getValue() == true)
             {
                 if (graphicsQueueFamilyIndex == i)
                 {
                     bestCaseAvailable = true;
                     break;
                 }
-                else
-                    presentationQueueFamilyIndex = i;
+
+                presentationQueueFamilyIndex = i;
             }
         }
         
