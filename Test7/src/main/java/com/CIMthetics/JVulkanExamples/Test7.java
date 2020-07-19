@@ -403,7 +403,7 @@ public class Test7
         
         public int sizeInBytes()
         {
-            return ((4 * 4) * 4) * 3;
+            return ((4 * 4)/* Elements in matrix */ * 4 /* elements are floats (4 bytes each)*/) * 3 /* 3 matrices */;
         }
     }
     
@@ -1254,15 +1254,15 @@ public class Test7
         
         log.trace("Creating {} descriptor sets.", setsNeeded);
         
-        Collection<VkDescriptorSetLayout> descriptorSets = new LinkedList<VkDescriptorSetLayout>();
+        Collection<VkDescriptorSetLayout> descriptorSetLayouts = new LinkedList<VkDescriptorSetLayout>();
         for (int i = 0; i < setsNeeded; i++)
         {
-            descriptorSets.add(descriptorSetLayoutHandle);
+            descriptorSetLayouts.add(descriptorSetLayoutHandle);
         }
         
         VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = new VkDescriptorSetAllocateInfo();
         descriptorSetAllocateInfo.setDescriptorPool(descriptorPoolHandle);
-        descriptorSetAllocateInfo.setSetLayouts(descriptorSets);
+        descriptorSetAllocateInfo.setSetLayouts(descriptorSetLayouts);
         
         VkResult result = vkAllocateDescriptorSets(vulkanLogicalDevice, descriptorSetAllocateInfo, descriptorSetHandles);
         if (result != VkResult.VK_SUCCESS)

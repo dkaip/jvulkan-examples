@@ -1835,7 +1835,7 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
             result = vkCreateFence(vulkanLogicalDevice, fenceCreateInfo, null, aFence);
             if (result != VkResult.VK_SUCCESS)
             {
-                throw new AssertionError("Failed to create renderFinishedSemaphoreHandle: " + vkResultToString(result));
+                throw new AssertionError("Failed to create inFlightFenceHandle: " + vkResultToString(result));
             }
             
             inFlightFenceHandles.add(aFence);
@@ -3347,6 +3347,8 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
             e.printStackTrace();
         }
         
+        log.trace("Current frame is {}", currentFrame);
+
         int indexToImage = -1;
         VkResult result = VkResult.VK_RESULT_MAX_ENUM;
         
@@ -3356,7 +3358,7 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         log.trace("Frame {} Waiting on fence {}", currentFrame, inFlightFenceHandles.get(currentFrame));
         vkWaitForFences(vulkanLogicalDevice, fenceCollection, true, UINT64_MAX);
         vkResetFences(vulkanLogicalDevice, fenceCollection);
-        log.trace("Frame {} Fence {} released.", currentFrame, inFlightFenceHandles.get(currentFrame));
+        log.trace("Frame {} Fence {} unsignaled.", currentFrame, inFlightFenceHandles.get(currentFrame));
         
         IntReturnValue imageIndex = new IntReturnValue(); 
         result = vkAcquireNextImageKHR(
@@ -3457,7 +3459,6 @@ import com.CIMthetics.jvulkan.Wayland.Objects.WlSurface;
         
         currentFrame++;
         currentFrame %= MAX_FRAMES_IN_FLIGHT;
-        log.trace("Current frame is {}", currentFrame);
     }
 
     private class SwapchainSupportDetails
