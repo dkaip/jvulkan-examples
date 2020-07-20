@@ -5,8 +5,8 @@ import java.util.EnumSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.CIMthetics.jvulkan.VulkanCore.VK11.VkDebugReportCallback;
-import com.CIMthetics.jvulkan.VulkanExtensions.VK11.Enums.VkDebugReportFlagBitsEXT;
+import com.CIMthetics.jvulkan.VulkanCore.VkDebugReportCallback;
+import com.CIMthetics.jvulkan.VulkanExtensions.Enums.VkDebugReportFlagBitsEXT;
 
 public class MyDebugCallback implements VkDebugReportCallback
 {
