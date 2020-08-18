@@ -43,7 +43,7 @@ subprojects {
         compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
         compile group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
         
-        compile group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.2'
+        compile group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.3'
         
         runtime project (':common')
         
@@ -58,8 +58,8 @@ subprojects {
         runtime group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.1.7-SNAPSHOT'
         runtime group: 'org.lwjgl', name: 'lwjgl-stb', version: '3.1.7-SNAPSHOT'
         
-        runtime group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.2'
-        runtime group: 'com.CIMthetics', name: 'libjvulkan-natives-Linux-x86_64', version: '0.0.2'
+        runtime group: 'com.CIMthetics', name: 'jvulkan', version: '0.0.3'
+        runtime group: 'com.CIMthetics', name: 'libjvulkan-natives-Linux-x86_64', version: '0.0.3'
     }
     
 }
