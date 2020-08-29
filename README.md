@@ -16,7 +16,7 @@ and available for use.
 
 ## Installation
 At the current time this software has only been built and run on a 64-bit Linux distribution (at this point 
-Fedora 29 x86_64).  
+Fedora 32 x86_64).  
 
 Also, at the current time the <code>WSI</code> method used is Wayland.
 
