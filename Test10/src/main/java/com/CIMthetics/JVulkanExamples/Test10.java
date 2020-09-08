@@ -79,8 +79,6 @@ import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkDestroySwapcha
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkDeviceWaitIdle;
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEndCommandBuffer;
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEnumerateDeviceExtensionProperties;
-import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEnumerateInstanceExtensionProperties;
-import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEnumerateInstanceLayerProperties;
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEnumerateInstanceVersion;
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkEnumeratePhysicalDevices;
 import static com.CIMthetics.jvulkan.VulkanCore.VulkanFunctions.vkFreeCommandBuffers;
